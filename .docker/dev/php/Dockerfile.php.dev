@@ -1,0 +1,30 @@
+FROM php:8.4-fpm-alpine
+
+COPY ./.docker/dev/php/conf/php.ini /usr/local/etc/php/php.ini
+
+RUN apk add --no-cache curl git build-base zlib-dev oniguruma-dev autoconf icu-dev bash
+
+RUN docker-php-ext-configure intl && docker-php-ext-install intl
+
+ARG PUID=1000
+ARG PGID=1000
+
+RUN apk --no-cache add shadow && groupmod -o -g ${PGID} www-data && usermod -o -u ${PUID} -g www-data www-data
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+
+RUN git config --global user.email "romansokolv209@gmail.com" && git config --global user.name "r0manch1k"
+
+USER www-data
+
+WORKDIR /var/www
+
+COPY ./backend /var/www
+WORKDIR /var/www
+
+CMD php-fpm
+
+EXPOSE 9000

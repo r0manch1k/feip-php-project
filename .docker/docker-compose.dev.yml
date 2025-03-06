@@ -1,0 +1,56 @@
+services:
+  nginx:
+    build:
+      context: ../.
+      dockerfile: ./.docker/dev/nginx/Dockerfile.nginx.dev
+    env_file:
+      - ./dev/.env.dev
+    volumes:
+      - .:/var/www:rw
+      - ./logs/nginx:/var/log/nginx/:rw
+    ports:
+      - 80:80
+    restart: always
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ../.
+      dockerfile: ./.docker/dev/php/Dockerfile.php.dev
+    volumes:
+      - ./backend:/var/www/html/
+      - /app/var
+      - /app/vandor
+    env_file:
+      - ./dev/.env.dev
+    depends_on:
+      - postgres
+
+  ###> doctrine/doctrine-bundle ###
+  postgres:
+    build:
+      context: ../.
+      dockerfile: ./.docker/dev/postgres/Dockerfile.postgres.dev
+    env_file:
+      - ./dev/.env.dev
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+  ###< doctrine/doctrine-bundle ###
+
+volumes:
+  ###> doctrine/doctrine-bundle ###
+  postgres_data:
+  ###< doctrine/doctrine-bundle ###
