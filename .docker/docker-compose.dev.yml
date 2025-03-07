@@ -6,8 +6,7 @@ services:
     env_file:
       - ./dev/.env.dev
     volumes:
-      - .:/var/www:rw
-      - ./logs/nginx:/var/log/nginx/:rw
+      - ./../backend/public:/var/www/public:rw
     ports:
       - 80:80
     restart: always
@@ -19,9 +18,9 @@ services:
       context: ../.
       dockerfile: ./.docker/dev/php/Dockerfile.php.dev
     volumes:
-      - ./backend:/var/www/html/
-      - /app/var
-      - /app/vandor
+      - ./../backend:/var/www/app/
+      - /var/www/app/var
+      - /var/www/app/vandor
     env_file:
       - ./dev/.env.dev
     depends_on:
@@ -33,13 +32,9 @@ services:
       context: ../.
       dockerfile: ./.docker/dev/postgres/Dockerfile.postgres.dev
     env_file:
-      - ./dev/.env.dev
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      - ./../backend/.env
     ports:
-      - ${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data:rw
     healthcheck:

@@ -30,3 +30,5 @@
 **/.idea
 **/logs/nginx/*
 **.DS_Store
+
+**/logs/nginx
