@@ -1,12 +1,16 @@
-DOCKER_COMPOSE_DEV = docker-compose -f ./.docker/docker-compose.dev.yml
-# DOCKER_COMPOSE_PROD = docker-compose -f ./.docker/docker-compose.prod.yml -p tye
+-include .env.local
+export
+
+DOCKER_COMPOSE = docker compose --env-file .env.local
+
+# CLEANING
 
 rm-volumes:
-	$(DOCKER_COMPOSE_DEV) down -v
+	$(DOCKER_COMPOSE) down -v
 	docker volume prune -a -f
 
 rm-images:
-	$(DOCKER_COMPOSE_DEV) down --rmi all
+	$(DOCKER_COMPOSE) down --rmi all
 	docker image prune -a -f
 
 rm-containers:
@@ -20,25 +24,25 @@ rm-system:
 
 rm-all: rm-volumes rm-images rm-containers rm-system rm-networks
 
-# DEV
+# DOCKER
 
-build-dev:
-	$(DOCKER_COMPOSE_DEV) build
+build:
+	$(DOCKER_COMPOSE) build
 
-up-dev:
-	$(DOCKER_COMPOSE_DEV) up -d
+up:
+	$(DOCKER_COMPOSE) up -d
 
-up-service-dev:
-	$(DOCKER_COMPOSE_DEV) up -d --no-deps --build $(SERVICE)
+up-service:
+	$(DOCKER_COMPOSE) up -d --no-deps --build $(SERVICE)
 
-up-logs-dev:
-	$(DOCKER_COMPOSE_DEV) up
+up-logs:
+	$(DOCKER_COMPOSE) up
 
-up-logs-service-dev:
-	$(DOCKER_COMPOSE_DEV) up --no-deps --build $(SERVICE)
+up-logs-service:
+	$(DOCKER_COMPOSE) up --no-deps --build $(SERVICE)
 
-down-dev:
-	$(DOCKER_COMPOSE_DEV) down
+down:
+	$(DOCKER_COMPOSE) down
 
 
-.PHONY: build-dev up-dev up-logs-dev down-dev
+.PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build-dev up-dev up-service-dev up-logs-dev up-logs-service-dev down-dev
