@@ -5,8 +5,8 @@
 Run this commands to setup environment:
 
 ```
-  cp .env .env.local
-  cp .env.dev .env.dev.local
+cp .env .env.local
+cp .env.dev .env.dev.local
 ```
 
 Build Docker images:
