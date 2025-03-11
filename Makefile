@@ -45,4 +45,4 @@ down:
 	$(DOCKER_COMPOSE) down
 
 
-.PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build-dev up-dev up-service-dev up-logs-dev up-logs-service-dev down-dev
+.PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build up up-service up-logs up-logs-service down
