@@ -2,6 +2,7 @@
 export
 
 DOCKER_COMPOSE = docker compose --env-file .env.local
+PHP = $(DOCKER_COMPOSE) exec -T php
 
 # CLEANING
 
@@ -44,5 +45,14 @@ up-logs-service:
 down:
 	$(DOCKER_COMPOSE) down
 
+# COMPOSER 
+
+composer-install:
+	$(PHP) composer install
+
+# PSALM
+
+psalm:
+	$(PHP) vendor/bin/psalm
 
 .PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build up up-service up-logs up-logs-service down

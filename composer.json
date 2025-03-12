@@ -97,13 +97,17 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
+        "orklah/psalm-insane-comparison": "^2.4",
+        "phpunit/phpunit": "^9.6",
+        "psalm/plugin-phpunit": "^0.19.2",
+        "psalm/plugin-symfony": "^5.2",
         "symfony/browser-kit": "7.2.*",
         "symfony/css-selector": "7.2.*",
         "symfony/debug-bundle": "7.2.*",
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^7.2",
         "symfony/stopwatch": "7.2.*",
-        "symfony/web-profiler-bundle": "7.2.*"
+        "symfony/web-profiler-bundle": "7.2.*",
+        "vimeo/psalm": "^6.8"
     }
 }

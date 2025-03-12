@@ -23,7 +23,7 @@ make up-logs
 
 _OPTIONAL_
 
-Create `.vscode/launch.json` file to configure Debug:
+Create `.vscode/launch.json` file to configure Xdebug:
 
 ```json
 {
