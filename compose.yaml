@@ -1,0 +1,62 @@
+services:
+  ###> doctrine/doctrine-bundle ###
+  nginx:
+    container_name: nginx
+    build:
+      context: ./docker/nginx
+    volumes:
+      - ./docker/nginx/conf/nginx.conf:/etc/nginx/default.conf:ro
+      - .:/var/www/project:ro
+    ports:
+      - ${WEB_HOST_PORT}:80
+    restart: always
+    depends_on:
+      - php
+
+  php:
+    container_name: php
+    build:
+      context: ./docker/php
+    environment:
+      - XDEBUG_PORT=${XDEBUG_PORT}
+    volumes:
+      - .:/var/www/project/
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    build:
+      context: ./docker/postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_HOST_PORT}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+  ###< doctrine/doctrine-bundle ###
+
+  ###> symfony/mailer ###
+  # mailer:
+  #   container_name: mailer
+  #   image: axllent/mailpit
+  #   ports:
+  #     - "1025"
+  #     - "8025"
+  #   environment:
+  #     MP_SMTP_AUTH_ACCEPT_ANY: 1
+  #     MP_SMTP_AUTH_ALLOW_INSECURE: 1
+  ###< symfony/mailer ###
+
+volumes:
+  ###> doctrine/doctrine-bundle ###
+  postgres-data:
+  ###< doctrine/doctrine-bundle ###
