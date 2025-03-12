@@ -16,6 +16,8 @@ RUN pecl channel-update pecl.php.net && pecl install amqp && pecl install xdebug
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+COPY ./conf/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
 WORKDIR /var/www/project
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

@@ -20,3 +20,24 @@ Run the application:
 ```
 make up-logs
 ```
+
+_OPTIONAL_
+
+Create `.vscode/launch.json` file to configure Debug:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/project/": "${workspaceFolder}"
+      }
+    }
+  ]
+}
+```
