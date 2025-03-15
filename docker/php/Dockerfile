@@ -12,7 +12,7 @@ RUN docker-php-ext-install pdo pdo_pgsql \
     sockets \
     zip
 
-RUN pecl channel-update pecl.php.net && pecl install amqp && pecl install xdebug
+RUN pecl channel-update pecl.php.net && pecl install amqp && pecl install xdebug-3.4.1
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

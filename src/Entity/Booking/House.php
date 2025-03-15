@@ -3,23 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\HouseRepository;
-use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: HouseRepository::class)]
-#[ORM\InheritanceType("JOINED")]
-#[ORM\DiscriminatorColumn(name: "type", type: "string")]
-#[ORM\DiscriminatorMap(["house" => House::class, "summer_house" => SummerHouse::class])]
 class House
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[ORM\Column(nullable: true)]
     private ?int $price = null;
 
     public function getId(): ?int

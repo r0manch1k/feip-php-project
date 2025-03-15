@@ -2,25 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\SummerHouseRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\House;
 
-#[ORM\Entity(repositoryClass: SummerHouseRepository::class)]
 class SummerHouse extends House
 {
-    #[ORM\Column(nullable: true)]
     private ?int $bedrooms = null;
 
-    #[ORM\Column(nullable: true)]
     private ?int $distanceFromSea = null;
 
-    #[ORM\Column(nullable: true)]
     private ?bool $hasShower = null;
 
-    #[ORM\Column(nullable: true)]
     private ?bool $hasBathroom = null;
 
     public function getBedrooms(): ?int

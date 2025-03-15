@@ -3,23 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\BookingRepository;
-use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BookingRepository::class)]
 class Booking
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $phoneNumber = null;
 
-    #[ORM\Column(nullable: true)]
     private ?int $houseId = null;
 
-    #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
     public function getId(): ?int
