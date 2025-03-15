@@ -4,5 +4,5 @@ doctrine:
             Booking:
                 is_bundle: false
                 type: xml
-                dir: "%kernel.project_dir%/src/Entity/Booking"
+                dir: '%kernel.project_dir%/src/Entity/Booking'
                 prefix: 'App\Entity\Booking'

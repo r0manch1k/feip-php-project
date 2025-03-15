@@ -42,7 +42,7 @@ Create `.vscode/launch.json` file to configure Xdebug:
 }
 ```
 
-Here is my format settings:
+Format settings:
 
 `.vscode/extensions.json`:
 
@@ -63,6 +63,9 @@ Here is my format settings:
 
 ```json
 {
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
@@ -72,6 +75,10 @@ Here is my format settings:
   "[gitinore]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
+
+  "xml.preferences.quoteStyle": "single",
+  "xml.format.enforceQuoteStyle": "preferred",
+
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml",
     "editor.tabSize": 4,
@@ -83,6 +90,12 @@ Here is my format settings:
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "editor.detectIndentation": false
+  },
+
+  "intelephense.format.enable": true,
+
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
   }
 }
 ```

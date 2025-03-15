@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
-    xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
-                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Entity\SummerHouse" table="summer_houses"
-        repository-class="App\Repository\SummerHouseRepository">
-        <inheritance-type value="JOINED" />
-        <discriminator-value value="summer_house" />
+<?xml version='1.0' encoding='UTF-8'?>
+<doctrine-mapping xmlns='http://doctrine-project.org/schemas/orm/doctrine-mapping'
+    xmlns:xsi='https://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd'>
+    <entity name='App\Entity\SummerHouse' table='summer_houses'
+        repository-class='App\Repository\SummerHouseRepository'>
+        <inheritance-type value='JOINED' />
+        <discriminator-value value='summer_house' />
 
-        <field name="bedrooms" type="integer" column="bedrooms" nullable="true" />
-        <field name="distanceFromSea" type="integer" column="distance_from_sea" nullable="true" />
-        <field name="hasShower" type="boolean" column="has_shower" nullable="true" />
-        <field name="hasBathroom" type="boolean" column="has_bathroom" nullable="true" />
+        <field name='bedrooms' type='integer' column='bedrooms' nullable='true' />
+        <field name='distanceFromSea' type='integer' column='distance_from_sea' nullable='true' />
+        <field name='hasShower' type='boolean' column='has_shower' nullable='true' />
+        <field name='hasBathroom' type='boolean' column='has_bathroom' nullable='true' />
     </entity>
 </doctrine-mapping>
