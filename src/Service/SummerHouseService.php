@@ -10,10 +10,10 @@ class SummerHouseService
 {
     private string $csvFile;
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel, ?string $csvFileOverride = null)
     {
         $projectDir = $kernel->getProjectDir();
-        $this->csvFile = $projectDir . '/csv/summerhouses.csv';
+        $this->csvFile = $projectDir . ($csvFileOverride ?? '/csv/summerhouses.csv');
     }
 
     /**
@@ -61,7 +61,7 @@ class SummerHouseService
             return false;
         }
 
-        while (($data = fgetcsv($file)) !== false) {
+        while (($data = fgetcsv($file, escape: '\\')) !== false) {
             if ($data !== null) {
                 $summerHouses[] = new SummerHouseDto(
                     (int)$data[0],

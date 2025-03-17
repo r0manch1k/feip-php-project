@@ -2,15 +2,13 @@
 
 namespace App\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-final class BookingControllerTest extends WebTestCase
+class BookingControllerTest extends ApiTestCase
 {
-    public function testIndex(): void
+    public function testSomething(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/booking');
+        $response = static::createClient()->request('GET', '/');
 
-        self::assertResponseIsSuccessful();
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['@id' => '/']);
     }
 }

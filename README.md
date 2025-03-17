@@ -15,10 +15,26 @@ Build Docker images:
 make build
 ```
 
+Install dependencies:
+
+```
+make composer-install
+```
+
 Run the application:
 
 ```
 make up-logs
+```
+
+_TESTS_
+
+Run tests:
+
+```
+make test-all
+make test-services
+make test-controllers
 ```
 
 _OPTIONAL_
@@ -85,6 +101,9 @@ Format settings:
     "editor.insertSpaces": true,
     "editor.detectIndentation": false
   },
+
+  "yaml.format.singleQuote": true,
+
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml",
     "editor.insertSpaces": true,

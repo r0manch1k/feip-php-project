@@ -10,10 +10,11 @@ class BookingService
 {
     private string $csvFile;
 
-    public function __construct(KernelInterface $kernel)
+    // use Symfony\Component\Filesystem\Path; ?
+    public function __construct(KernelInterface $kernel, ?string $csvFileOverride = null)
     {
         $projectDir = $kernel->getProjectDir();
-        $this->csvFile = $projectDir . '/csv/bookings.csv';
+        $this->csvFile = $projectDir . ($csvFileOverride ?? '/csv/bookings.csv');
     }
 
     /**
@@ -58,7 +59,7 @@ class BookingService
             return false;
         }
 
-        while (($data = fgetcsv($file)) !== false) {
+        while (($data = fgetcsv($file, escape: '\\')) !== false) {
             if ($data !== null) {
                 $bookings[] = new BookingDto(
                     (int)$data[0],

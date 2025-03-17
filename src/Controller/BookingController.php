@@ -39,7 +39,7 @@ final class BookingController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        // TODO: I don't know how to validate the data
+        // TODO: I will implement validation when migrate to orm
 
         if (!isset($data['phoneNumber'])) {
             return $this->json(['error' => 'Missing Phone Number'], 400);

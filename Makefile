@@ -55,4 +55,17 @@ composer-install:
 psalm:
 	$(PHP) vendor/bin/psalm
 
-.PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build up up-service up-logs up-logs-service down
+# TESTS
+
+test-all:
+	$(PHP) ./vendor/bin/phpunit --bootstrap vendor/autoload.php
+
+test-services:
+	$(PHP) ./vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Service
+
+test-controllers:
+	$(PHP) ./vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Controller
+
+
+.PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build up \
+		up-service up-logs up-logs-service down composer-install psalm tests

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Booking;
 
-use App\Entity\House;
+use App\Entity\Booking\House;
 
 class SummerHouse extends House
 {

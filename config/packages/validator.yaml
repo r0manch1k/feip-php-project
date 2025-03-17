@@ -2,8 +2,14 @@ framework:
     validation:
         # Enables validator auto-mapping support.
         # For instance, basic validation constraints will be inferred from Doctrine's metadata.
-        #auto_mapping:
-        #    App\Entity\: []
+        auto_mapping:
+            App\Entity\: []
+            App\Entity\Booking\:
+                [
+                    'App\Entity\Booking\Booking',
+                    'App\Entity\Booking\House',
+                    'App\Entity\Booking\SummerHouse:',
+                ]
 
 when@test:
     framework:

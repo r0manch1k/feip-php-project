@@ -3,7 +3,7 @@
     xmlns:xsi='https://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd'>
-    <entity name='App\Entity\House' repository-class='App\Repository\HouseRepository'>
+    <entity name='App\Entity\Booking\House' repository-class='App\Repository\HouseRepository'>
         <id name='id' type='integer' column='id'>
             <generator strategy='AUTO' />
         </id>
