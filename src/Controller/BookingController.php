@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use App\Dto\BookingDto;
 use App\Service\BookingService;
+use App\Service\SummerHouseService;
 
 #[Route('/api/booking', name: 'api_booking_')]
 final class BookingController extends AbstractController
@@ -26,7 +27,7 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'Failed to open file'], 500);
         }
 
-        return $this->json($bookings);
+        return $this->json($bookings, 200);
     }
 
     /**
@@ -34,7 +35,7 @@ final class BookingController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, BookingService $bookingService): JsonResponse
+    public function create(Request $request, BookingService $bookingService, SummerHouseService $summerHouseService): JsonResponse
     {
 
         $data = json_decode($request->getContent(), true);
@@ -64,7 +65,7 @@ final class BookingController extends AbstractController
             comment: $data['comment'] ? $data['comment'] : 'None'
         );
 
-        if ($bookingService->saveBookings([$booking]) === false) {
+        if ($bookingService->saveBookings($summerHouseService, [$booking]) === false) {
             return $this->json(['error' => 'Failed to save booking'], 500);
         }
 
@@ -76,7 +77,7 @@ final class BookingController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/change-comment/{bookingId}', name: 'change', methods: ['PUT'])]
-    public function change(Request $request, int $bookingId, BookingService $bookingService): JsonResponse
+    public function change(Request $request, int $bookingId, BookingService $bookingService, SummerHouseService $summerHouseService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -113,7 +114,7 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'Booking not found'], 404);
         }
 
-        if ($bookingService->saveBookings($bookings, true) === false) {
+        if ($bookingService->saveBookings($summerHouseService, $bookings, true) === false) {
             return $this->json(['error' => 'Failed to save booking'], 500);
         }
 

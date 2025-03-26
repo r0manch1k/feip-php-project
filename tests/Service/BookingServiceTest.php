@@ -5,6 +5,7 @@ namespace App\Tests\Service;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 use App\Service\BookingService;
+use App\Service\SummerHouseService;
 
 use App\Dto\BookingDto;
 
@@ -40,9 +41,25 @@ class BookingServiceTest extends KernelTestCase
 
         $this->assertSame('test', $kernel->getEnvironment());
 
+        /**
+         * @var string $testCsvFile
+         */
         $testCsvFile = '/tests/csv/bookings_2.csv';
 
         $bookingService = new BookingService($kernel, $testCsvFile);
+
+        /**
+         * @var SummerHouseService $summerHouseService_WA
+         */
+        $testSHCsvFile_WA = '/tests/csv/summerhouses_1.csv';
+
+        /**
+         * @var SummerHouseService $summerHouseService_OK
+         */
+        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
+
+        $summerHouseService_WA = new SummerHouseService($kernel, $testSHCsvFile_WA);
+        $summerHouseService_OK = new SummerHouseService($kernel, $testSHSCsvFile_OK);
 
         /**
          * @var BookingDto[] $newBookings
@@ -68,12 +85,16 @@ class BookingServiceTest extends KernelTestCase
             ),
         ];
 
-        $this->assertNotFalse($bookingService->saveBookings($newBookings, true));
+        $this->assertFalse($bookingService->saveBookings($summerHouseService_WA, $newBookings, true,));
+
+        $this->assertNotFalse($bookingService->saveBookings($summerHouseService_OK, $newBookings, true,));
 
         /**
          * @var BookingDto[] $bookings
          */
         $bookings = $bookingService->getBookings();
+
+        $this->assertNotFalse($bookings);
 
         $this->assertCount(count($newBookings), $bookings);
     }
@@ -89,6 +110,14 @@ class BookingServiceTest extends KernelTestCase
         $bookingService = new BookingService($kernel, $testCsvFile);
 
         /**
+         * @var SummerHouseService $summerHouseService_OK
+         */
+        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
+        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
+
+        $summerHouseService_OK = new SummerHouseService($kernel, $testSHSCsvFile_OK);
+
+        /**
          * @var BookingDto[] $newBookings
          */
         $newBookings = [
@@ -112,9 +141,9 @@ class BookingServiceTest extends KernelTestCase
             ),
         ];
 
-        $bookingService->saveBookings($newBookings);
+        $bookingService->saveBookings($summerHouseService_OK, $newBookings);
 
-        $this->assertNotFalse($bookingService->saveBookings($newBookings));
+        $this->assertNotFalse($bookingService->saveBookings($summerHouseService_OK, $newBookings));
 
         /**
          * @var BookingDto[] $bookings

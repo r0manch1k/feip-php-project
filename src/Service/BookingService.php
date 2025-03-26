@@ -5,9 +5,12 @@ namespace App\Service;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 use App\Dto\BookingDto;
+use App\Kernel;
+use App\Service\SummerHouseService;
 
 class BookingService
 {
+    private KernelInterface $kernel;
     private string $csvFile;
 
     // use Symfony\Component\Filesystem\Path; ?
@@ -15,6 +18,7 @@ class BookingService
     {
         $projectDir = $kernel->getProjectDir();
         $this->csvFile = $projectDir . ($csvFileOverride ?? '/csv/bookings.csv');
+        $this->kernel = $kernel;
     }
 
     /**
@@ -79,8 +83,14 @@ class BookingService
      * @param bool $rewrite
      * @return bool
      */
-    public function saveBookings(array $bookings, bool $rewrite = false): bool
+    public function saveBookings(SummerHouseService $summerHouseService, array $bookings, bool $rewrite = false): bool
     {
+        for ($i = 0; $i < count($bookings); $i++) {
+            if (!$summerHouseService->isHouseIdExists($bookings[$i]->houseId)) {
+                return false;
+            }
+        }
+
         /**
          * @var int $startId
          */
@@ -110,7 +120,7 @@ class BookingService
                 $booking->phoneNumber,
                 $booking->houseId,
                 $booking->comment
-            ]);
+            ], escape: '\\');
         }
 
         fclose($file);

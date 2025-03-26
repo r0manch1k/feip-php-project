@@ -1,6 +1,3 @@
-imports:
-    - { resource: doctrine/booking.yaml }
-
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'

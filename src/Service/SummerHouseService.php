@@ -42,6 +42,27 @@ class SummerHouseService
     }
 
     /**
+     * @param int $houseId
+     * return bool
+     */
+    public function isHouseIdExists(int $houseId): bool
+    {
+        $summerHouses = $this->getSummerHouses();
+
+        if ($summerHouses === false) {
+            return false;
+        }
+
+        foreach ($summerHouses as $summerHouse) {
+            if ($summerHouse->id === $houseId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return SummerHouseDto[]|false
      */
     public function getSummerHouses(): array | false
@@ -64,13 +85,13 @@ class SummerHouseService
         while (($data = fgetcsv($file, escape: '\\')) !== false) {
             if ($data !== null) {
                 $summerHouses[] = new SummerHouseDto(
-                    (int)$data[0],
-                    $data[1],
-                    (int)$data[2],
-                    (int)$data[3],
-                    (int)$data[4],
-                    (bool)$data[5],
-                    (bool)$data[6]
+                    id: (int)$data[0],
+                    address: $data[1],
+                    price: (int)$data[2],
+                    bedrooms: (int)$data[3],
+                    distanceFromSea: (int)$data[4],
+                    hasShower: (bool)$data[5],
+                    hasBathroom: (bool)$data[6]
                 );
             }
         }
@@ -118,7 +139,7 @@ class SummerHouseService
                 $summerHouse->distanceFromSea,
                 $summerHouse->hasShower,
                 $summerHouse->hasBathroom
-            ]);
+            ], escape: '\\');
         }
 
         fclose($file);

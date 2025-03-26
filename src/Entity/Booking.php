@@ -1,20 +1,40 @@
 <?php
 
-namespace App\Entity\Booking;
+namespace App\Entity;
 
 use App\Repository\BookingRepository;
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity(repositoryClass: BookingRepository::class)]
 class Booking
 {
-    private ?int $id = null;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
+    #[ORM\Column(length: 15, nullable: true)]
     private ?string $phoneNumber = null;
 
+    #[ORM\Column(nullable: true)]
     private ?int $houseId = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
 
-    public function getId(): ?int
+    public function __construct(
+        int $id,
+        ?string $phoneNumber = null,
+        ?int $houseId = null,
+        ?string $comment = null
+    ) {
+        $this->id = $id;
+        $this->phoneNumber = $phoneNumber;
+        $this->houseId = $houseId;
+        $this->comment = $comment;
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
@@ -48,7 +68,7 @@ class Booking
         return $this->comment;
     }
 
-    public function setComment(string $comment): static
+    public function setComment(?string $comment): static
     {
         $this->comment = $comment;
 

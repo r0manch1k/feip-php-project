@@ -68,4 +68,5 @@ test-controllers:
 
 
 .PHONY: rm-volumes rm-images rm-containers rm-networks rm-system rm-all build up \
-		up-service up-logs up-logs-service down composer-install psalm tests
+		up-service up-logs up-logs-service down composer-install psalm test-all \
+		test-services test-controllers
