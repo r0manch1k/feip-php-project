@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity\Booking;
+namespace App\Entity;
 
-use App\Entity\Booking\House;
+use App\Entity\House;
 use App\Repository\SummerHouseRepository;
 use Doctrine\ORM\Mapping as ORM;
 

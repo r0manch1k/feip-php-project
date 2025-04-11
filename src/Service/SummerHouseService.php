@@ -2,18 +2,19 @@
 
 namespace App\Service;
 
-use Symfony\Component\HttpKernel\KernelInterface;
-
 use App\Dto\SummerHouseDto;
 
 class SummerHouseService
 {
-    private string $csvFile;
+    private string $csvFilePath;
 
-    public function __construct(KernelInterface $kernel, ?string $csvFileOverride = null)
+    public function __construct(string $csvFilePath, ?string $csvFilePathOverride = null)
     {
-        $projectDir = $kernel->getProjectDir();
-        $this->csvFile = $projectDir . ($csvFileOverride ?? '/csv/summerhouses.csv');
+        if ($csvFilePathOverride !== null) {
+            $this->csvFilePath = $csvFilePathOverride;
+        } else {
+            $this->csvFilePath = $csvFilePath;
+        }
     }
 
     /**
@@ -73,7 +74,7 @@ class SummerHouseService
         $summerHouses = [];
 
         try {
-            $file = fopen($this->csvFile, 'r');
+            $file = fopen($this->csvFilePath, 'r');
         } catch (\Exception $e) {
             return false;
         }
@@ -121,7 +122,7 @@ class SummerHouseService
         }
 
         try {
-            $file = fopen($this->csvFile, $rewrite ? 'w' : 'a');
+            $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
         } catch (\Exception $e) {
             return false;
         }

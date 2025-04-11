@@ -95,7 +95,14 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'Failed to open file'], 500);
         }
 
-        $updated = false;
+        /**
+         * @var bool $updated
+         */
+        $isIdExists = $bookingService->isIdExists($bookingId);
+
+        if ($isIdExists === false) {
+            return $this->json(['error' => 'Booking not found'], 404);
+        }
 
         foreach ($bookings as $key => $booking) {
             if ($booking->id === $bookingId) {
@@ -105,13 +112,8 @@ final class BookingController extends AbstractController
                     houseId: $booking->houseId,
                     comment: $data['comment']
                 );
-                $updated = true;
                 break;
             }
-        }
-
-        if ($updated == false) {
-            return $this->json(['error' => 'Booking not found'], 404);
         }
 
         if ($bookingService->saveBookings($summerHouseService, $bookings, true) === false) {

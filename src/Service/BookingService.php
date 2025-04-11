@@ -2,23 +2,20 @@
 
 namespace App\Service;
 
-use Symfony\Component\HttpKernel\KernelInterface;
-
 use App\Dto\BookingDto;
-use App\Kernel;
 use App\Service\SummerHouseService;
 
 class BookingService
 {
-    private KernelInterface $kernel;
-    private string $csvFile;
+    private string $csvFilePath;
 
-    // use Symfony\Component\Filesystem\Path; ?
-    public function __construct(KernelInterface $kernel, ?string $csvFileOverride = null)
+    public function __construct(string $csvFilePath, ?string $csvFilePathOverride = null)
     {
-        $projectDir = $kernel->getProjectDir();
-        $this->csvFile = $projectDir . ($csvFileOverride ?? '/csv/bookings.csv');
-        $this->kernel = $kernel;
+        if ($csvFilePathOverride !== null) {
+            $this->csvFilePath = $csvFilePathOverride;
+        } else {
+            $this->csvFilePath = $csvFilePath;
+        }
     }
 
     /**
@@ -44,6 +41,27 @@ class BookingService
     }
 
     /**
+     * @param int $id
+     * @return bool
+     */
+    public function isIdExists(int $id): bool
+    {
+        $bookings = $this->getBookings();
+
+        if ($bookings === false) {
+            return false;
+        }
+
+        foreach ($bookings as $booking) {
+            if ($booking->id === $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return BookingDto[]|false
      */
     public function getBookings(): array | false
@@ -54,7 +72,7 @@ class BookingService
         $bookings = [];
 
         try {
-            $file = fopen($this->csvFile, 'r');
+            $file = fopen($this->csvFilePath, 'r');
         } catch (\Exception $e) {
             return false;
         }
@@ -105,7 +123,7 @@ class BookingService
         }
 
         try {
-            $file = fopen($this->csvFile, $rewrite ? 'w' : 'a');
+            $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
         } catch (\Exception $e) {
             return false;
         }

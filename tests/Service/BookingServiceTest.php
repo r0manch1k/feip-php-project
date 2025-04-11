@@ -41,24 +41,24 @@ class BookingServiceTest extends KernelTestCase
 
         $this->assertSame('test', $kernel->getEnvironment());
 
-        /**
-         * @var string $testCsvFile
-         */
+
         $testCsvFile = '/tests/csv/bookings_2.csv';
 
         $bookingService = new BookingService($kernel, $testCsvFile);
 
+
+        $testSHCsvFile_WA = '/tests/csv/summerhouses_1.csv';
+
+        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
+
         /**
          * @var SummerHouseService $summerHouseService_WA
          */
-        $testSHCsvFile_WA = '/tests/csv/summerhouses_1.csv';
+        $summerHouseService_WA = new SummerHouseService($kernel, $testSHCsvFile_WA);
 
         /**
          * @var SummerHouseService $summerHouseService_OK
          */
-        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
-
-        $summerHouseService_WA = new SummerHouseService($kernel, $testSHCsvFile_WA);
         $summerHouseService_OK = new SummerHouseService($kernel, $testSHSCsvFile_OK);
 
         /**
@@ -109,12 +109,12 @@ class BookingServiceTest extends KernelTestCase
 
         $bookingService = new BookingService($kernel, $testCsvFile);
 
-        /**
-         * @var SummerHouseService $summerHouseService_OK
-         */
         $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
         $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
 
+        /**
+         * @var SummerHouseService $summerHouseService_OK
+         */
         $summerHouseService_OK = new SummerHouseService($kernel, $testSHSCsvFile_OK);
 
         /**
