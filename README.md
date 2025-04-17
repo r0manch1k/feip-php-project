@@ -33,6 +33,11 @@ Run tests:
 
 ```
 make test-all
+```
+
+or...
+
+```
 make test-services
 make test-controllers
 ```

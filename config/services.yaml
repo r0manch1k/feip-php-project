@@ -25,10 +25,10 @@ services:
 
     App\Service\BookingService:
         arguments:
-            # $projectDir: '%kernel.project_dir%'
-            $csvFilePath: '%kernel.project_dir%/csv/bookings.csv'
+            $projectDir: '%kernel.project_dir%'
+            $csvFilePath: '/csv/bookings.csv'
 
     App\Service\SummerHouseService:
         arguments:
-            # $projectDir: '%kernel.project_dir%'
-            $csvFilePath: '%kernel.project_dir%/csv/summerhouses.csv'
+            $projectDir: '%kernel.project_dir%'
+            $csvFilePath: '/csv/summerhouses.csv'

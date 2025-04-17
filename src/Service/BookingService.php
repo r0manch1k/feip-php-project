@@ -7,27 +7,27 @@ use App\Service\SummerHouseService;
 
 class BookingService
 {
+    /**
+     * @var string
+     */
     private string $csvFilePath;
 
-    public function __construct(string $csvFilePath, ?string $csvFilePathOverride = null)
+    public function __construct(string $projectDir, string $csvFilePath)
     {
-        if ($csvFilePathOverride !== null) {
-            $this->csvFilePath = $csvFilePathOverride;
-        } else {
-            $this->csvFilePath = $csvFilePath;
-        }
+        $this->csvFilePath = $projectDir . $csvFilePath;
     }
 
     /**
-     * @return int|false
+     * @return int
      */
-    private function getLastId(): int | false
+    private function getLastId(): int
     {
-        $bookings = $this->getBookings();
-
-        if ($bookings === false) {
-            return false;
+        try {
+            $bookings = $this->getBookings();
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to get bookings: ' . $e->getMessage());
         }
+
 
         $lastId = 0;
 
@@ -46,10 +46,10 @@ class BookingService
      */
     public function isIdExists(int $id): bool
     {
-        $bookings = $this->getBookings();
-
-        if ($bookings === false) {
-            return false;
+        try {
+            $bookings = $this->getBookings();
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to get bookings: ' . $e->getMessage());
         }
 
         foreach ($bookings as $booking) {
@@ -62,23 +62,19 @@ class BookingService
     }
 
     /**
-     * @return BookingDto[]|false
+     * @return BookingDto[]
      */
-    public function getBookings(): array | false
+    public function getBookings(): array
     {
         /**
          * @var BookingDto[] $bookings
          */
         $bookings = [];
 
-        try {
-            $file = fopen($this->csvFilePath, 'r');
-        } catch (\Exception $e) {
-            return false;
-        }
+        $file = fopen($this->csvFilePath, 'r');
 
         if ($file === false) {
-            return false;
+            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
         }
 
         while (($data = fgetcsv($file, escape: '\\')) !== false) {
@@ -99,13 +95,13 @@ class BookingService
     /**
      * @param BookingDto[] $bookings
      * @param bool $rewrite
-     * @return bool
+     * @return void
      */
-    public function saveBookings(SummerHouseService $summerHouseService, array $bookings, bool $rewrite = false): bool
+    public function saveBookings(SummerHouseService $summerHouseService, array $bookings, bool $rewrite = false): void
     {
         for ($i = 0; $i < count($bookings); $i++) {
             if (!$summerHouseService->isHouseIdExists($bookings[$i]->houseId)) {
-                return false;
+                throw new \Exception('House ID ' . $bookings[$i]->houseId . ' does not exist.');
             }
         }
 
@@ -115,21 +111,17 @@ class BookingService
         $startId = -1;
 
         if ($rewrite === false) {
-            $startId = $this->getLastId();
-
-            if ($startId === false) {
-                return false;
+            try {
+                $startId = $this->getLastId();
+            } catch (\Exception $e) {
+                throw new \Exception('Failed to get last ID: ' . $e->getMessage());
             }
         }
 
-        try {
-            $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
-        } catch (\Exception $e) {
-            return false;
-        }
+        $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
 
         if ($file === false) {
-            return false;
+            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
         }
 
         foreach ($bookings as $booking) {
@@ -142,7 +134,5 @@ class BookingService
         }
 
         fclose($file);
-
-        return true;
     }
 }

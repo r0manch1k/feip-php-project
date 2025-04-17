@@ -6,26 +6,25 @@ use App\Dto\SummerHouseDto;
 
 class SummerHouseService
 {
+    /**
+     * @var string
+     */
     private string $csvFilePath;
 
-    public function __construct(string $csvFilePath, ?string $csvFilePathOverride = null)
+    public function __construct(string $projectDir, string $csvFilePath)
     {
-        if ($csvFilePathOverride !== null) {
-            $this->csvFilePath = $csvFilePathOverride;
-        } else {
-            $this->csvFilePath = $csvFilePath;
-        }
+        $this->csvFilePath = $projectDir . $csvFilePath;
     }
 
     /**
-     * @return int|false
+     * @return int
      */
-    private function getLastId(): int | false
+    private function getLastId(): int
     {
-        $summerHouses = $this->getSummerHouses();
-
-        if ($summerHouses === false) {
-            return false;
+        try {
+            $summerHouses = $this->getSummerHouses();
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to get summer houses: ' . $e->getMessage());
         }
 
         /**
@@ -48,10 +47,10 @@ class SummerHouseService
      */
     public function isHouseIdExists(int $houseId): bool
     {
-        $summerHouses = $this->getSummerHouses();
-
-        if ($summerHouses === false) {
-            return false;
+        try {
+            $summerHouses = $this->getSummerHouses();
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to get summer houses: ' . $e->getMessage());
         }
 
         foreach ($summerHouses as $summerHouse) {
@@ -64,23 +63,19 @@ class SummerHouseService
     }
 
     /**
-     * @return SummerHouseDto[]|false
+     * @return SummerHouseDto[]
      */
-    public function getSummerHouses(): array | false
+    public function getSummerHouses(): array
     {
         /**
          * @var SummerHouseDto[] $summerHouses
          */
         $summerHouses = [];
 
-        try {
-            $file = fopen($this->csvFilePath, 'r');
-        } catch (\Exception $e) {
-            return false;
-        }
+        $file = fopen($this->csvFilePath, 'r');
 
         if ($file === false) {
-            return false;
+            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
         }
 
         while (($data = fgetcsv($file, escape: '\\')) !== false) {
@@ -104,9 +99,9 @@ class SummerHouseService
     /**
      * @param SummerHouseDto[] $summerHouses
      * @param bool $rewrite
-     * @return bool
+     * @return void
      */
-    public function saveSummerHouses(array $summerHouses, bool $rewrite = false): bool
+    public function saveSummerHouses(array $summerHouses, bool $rewrite = false): void
     {
         /**
          * @var int $startId
@@ -114,21 +109,17 @@ class SummerHouseService
         $startId = -1;
 
         if ($rewrite === false) {
-            $startId = $this->getLastId();
-
-            if ($startId === false) {
-                return false;
+            try {
+                $startId = $this->getLastId();
+            } catch (\Exception $e) {
+                throw new \Exception('Failed to get last ID: ' . $e->getMessage());
             }
         }
 
-        try {
-            $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
-        } catch (\Exception $e) {
-            return false;
-        }
+        $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
 
         if ($file === false) {
-            return false;
+            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
         }
 
         foreach ($summerHouses as $summerHouse) {
@@ -144,7 +135,5 @@ class SummerHouseService
         }
 
         fclose($file);
-
-        return true;
     }
 }

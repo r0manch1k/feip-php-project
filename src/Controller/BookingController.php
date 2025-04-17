@@ -21,9 +21,9 @@ final class BookingController extends AbstractController
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(Request $request, BookingService $bookingService): JsonResponse
     {
-        $bookings = $bookingService->getBookings();
-
-        if ($bookings === false) {
+        try {
+            $bookings = $bookingService->getBookings();
+        } catch (\Exception $e) {
             return $this->json(['error' => 'Failed to open file'], 500);
         }
 
@@ -65,7 +65,9 @@ final class BookingController extends AbstractController
             comment: $data['comment'] ? $data['comment'] : 'None'
         );
 
-        if ($bookingService->saveBookings($summerHouseService, [$booking]) === false) {
+        try {
+            $bookingService->saveBookings($summerHouseService, [$booking]);
+        } catch (\Exception $e) {
             return $this->json(['error' => 'Failed to save booking'], 500);
         }
 
@@ -89,16 +91,21 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'Comment must be a string'], 400);
         }
 
-        $bookings = $bookingService->getBookings();
-
-        if ($bookings === false) {
+        try {
+            $bookings = $bookingService->getBookings();
+        } catch (\Exception $e) {
             return $this->json(['error' => 'Failed to open file'], 500);
         }
 
-        /**
-         * @var bool $updated
-         */
-        $isIdExists = $bookingService->isIdExists($bookingId);
+        try {
+            /**
+             * @var bool $updated
+             */
+            $isIdExists = $bookingService->isIdExists($bookingId);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Failed to check ID existence'], 500);
+        }
+
 
         if ($isIdExists === false) {
             return $this->json(['error' => 'Booking not found'], 404);
@@ -116,7 +123,9 @@ final class BookingController extends AbstractController
             }
         }
 
-        if ($bookingService->saveBookings($summerHouseService, $bookings, true) === false) {
+        try {
+            $bookingService->saveBookings($summerHouseService, $bookings, true);
+        } catch (\Exception $e) {
             return $this->json(['error' => 'Failed to save booking'], 500);
         }
 

@@ -19,16 +19,18 @@ class SummerHouseServiceTest extends KernelTestCase
         /**
          * @var string $testCsvFile
          */
-        $testCsvFile = '/tests/csv/summerhouses_1.csv';
+        $testCsvFile =  '/tests/csv/summerhouses_1.csv';
 
-        $summerHouseService = new SummerHouseService($kernel, $testCsvFile);
+        $summerHouseService = new SummerHouseService($kernel->getProjectDir(), $testCsvFile);
 
-        /**
-         * @var SummerHouseDto[] $summerHouses
-         */
-        $summerHouses = $summerHouseService->getSummerHouses();
-
-        $this->assertNotFalse($summerHouses);
+        try {
+            /**
+             * @var SummerHouseDto[] $summerHouses
+             */
+            $summerHouses = $summerHouseService->getSummerHouses();
+        } catch (\Exception $e) {
+            $this->fail('Failed to get summer houses: ' . $e->getMessage());
+        }
 
         $this->assertIsArray($summerHouses);
 
@@ -48,7 +50,7 @@ class SummerHouseServiceTest extends KernelTestCase
          */
         $testCsvFile = '/tests/csv/summerhouses_1.csv';
 
-        $summerHouseService = new SummerHouseService($kernel, $testCsvFile);
+        $summerHouseService = new SummerHouseService($kernel->getProjectDir(), $testCsvFile);
 
         /**
          * @var SummerHouseDto[] $newSummerHouses
@@ -73,15 +75,20 @@ class SummerHouseServiceTest extends KernelTestCase
                 hasBathroom: true
             )
         ];
+        try {
+            $summerHouseService->saveSummerHouses($newSummerHouses, true);
+        } catch (\Exception $e) {
+            $this->fail('Failed to get summer houses: ' . $e->getMessage());
+        }
 
-        $this->assertNotFalse($summerHouseService->saveSummerHouses($newSummerHouses, true));
-
-        /**
-         * @var SummerHouseDto[] $summerHouses
-         */
-        $summerHouses = $summerHouseService->getSummerHouses();
-
-        $this->assertNotFalse($summerHouses);
+        try {
+            /**
+             * @var SummerHouseDto[] $summerHouses
+             */
+            $summerHouses = $summerHouseService->getSummerHouses();
+        } catch (\Exception $e) {
+            $this->fail('Failed to get summer houses: ' . $e->getMessage());
+        }
 
         $this->assertCount(count($newSummerHouses), $summerHouses);
     }

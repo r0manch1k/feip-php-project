@@ -20,9 +20,9 @@ final class SummerHouseController extends AbstractController
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(Request $request, SummerHouseService $summerHouseService): JsonResponse
     {
-        $summerHouses = $summerHouseService->getSummerHouses();
-
-        if ($summerHouses === false) {
+        try {
+            $summerHouses = $summerHouseService->getSummerHouses();
+        } catch (\Exception $e) {
             return $this->json(['error' => 'Failed to open file'], 500);
         }
 
@@ -49,8 +49,10 @@ final class SummerHouseController extends AbstractController
             hasBathroom: $data['hasBathroom'] ? $data['hasBathroom'] : false
         );
 
-        if ($summerHouseService->saveSummerHouses([$summerHouse]) === false) {
-            return $this->json(['error' => 'Failed to save summerHouse'], 500);
+        try {
+            $summerHouseService->saveSummerHouses([$summerHouse]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Failed to save summer house'], 500);
         }
 
         return $this->json(['message' => 'Booked successfully'], 201);

@@ -19,14 +19,16 @@ class BookingServiceTest extends KernelTestCase
 
         $testCsvFile = '/tests/csv/bookings_1.csv';
 
-        $bookingService = new BookingService($kernel, $testCsvFile);
+        $bookingService = new BookingService($kernel->getProjectDir(), $testCsvFile);
 
-        /**
-         * @var BookingDto[] $bookings
-         */
-        $bookings = $bookingService->getBookings();
-
-        $this->assertNotFalse($bookings);
+        try {
+            /**
+             * @var BookingDto[] $bookings
+             */
+            $bookings = $bookingService->getBookings();
+        } catch (\Exception $e) {
+            $this->fail('Failed to get bookings: ' . $e->getMessage());
+        }
 
         $this->assertIsArray($bookings);
 
@@ -44,22 +46,22 @@ class BookingServiceTest extends KernelTestCase
 
         $testCsvFile = '/tests/csv/bookings_2.csv';
 
-        $bookingService = new BookingService($kernel, $testCsvFile);
+        $bookingService = new BookingService($kernel->getProjectDir(), $testCsvFile);
 
 
-        $testSHCsvFile_WA = '/tests/csv/summerhouses_1.csv';
+        $testSHCsvFile_WA = $kernel->getProjectDir() . '/tests/csv/summerhouses_1.csv';
 
-        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
+        $testSHSCsvFile_OK = $kernel->getProjectDir() . '/tests/csv/summerhouses_2.csv';
 
         /**
          * @var SummerHouseService $summerHouseService_WA
          */
-        $summerHouseService_WA = new SummerHouseService($kernel, $testSHCsvFile_WA);
+        $summerHouseService_WA = new SummerHouseService($kernel->getProjectDir(), $testSHCsvFile_WA);
 
         /**
          * @var SummerHouseService $summerHouseService_OK
          */
-        $summerHouseService_OK = new SummerHouseService($kernel, $testSHSCsvFile_OK);
+        $summerHouseService_OK = new SummerHouseService($kernel->getProjectDir(), $testSHSCsvFile_OK);
 
         /**
          * @var BookingDto[] $newBookings
@@ -85,16 +87,23 @@ class BookingServiceTest extends KernelTestCase
             ),
         ];
 
-        $this->assertFalse($bookingService->saveBookings($summerHouseService_WA, $newBookings, true,));
+        $this->expectException(\Exception::class);
+        $bookingService->saveBookings($summerHouseService_WA, $newBookings, true,);
 
-        $this->assertNotFalse($bookingService->saveBookings($summerHouseService_OK, $newBookings, true,));
+        try {
+            $bookingService->saveBookings($summerHouseService_OK, $newBookings, true,);
+        } catch (\Exception $e) {
+            $this->fail('Failed to save bookings: ' . $e->getMessage());
+        }
 
-        /**
-         * @var BookingDto[] $bookings
-         */
-        $bookings = $bookingService->getBookings();
-
-        $this->assertNotFalse($bookings);
+        try {
+            /**
+             * @var BookingDto[] $bookings
+             */
+            $bookings = $bookingService->getBookings();
+        } catch (\Exception $e) {
+            $this->fail('Failed to get bookings: ' . $e->getMessage());
+        }
 
         $this->assertCount(count($newBookings), $bookings);
     }
@@ -107,15 +116,14 @@ class BookingServiceTest extends KernelTestCase
 
         $testCsvFile = '/tests/csv/bookings_2.csv';
 
-        $bookingService = new BookingService($kernel, $testCsvFile);
+        $bookingService = new BookingService($kernel->getProjectDir(), $testCsvFile);
 
-        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
         $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
 
         /**
          * @var SummerHouseService $summerHouseService_OK
          */
-        $summerHouseService_OK = new SummerHouseService($kernel, $testSHSCsvFile_OK);
+        $summerHouseService_OK = new SummerHouseService($kernel->getProjectDir(), $testSHSCsvFile_OK);
 
         /**
          * @var BookingDto[] $newBookings
@@ -141,14 +149,21 @@ class BookingServiceTest extends KernelTestCase
             ),
         ];
 
-        $bookingService->saveBookings($summerHouseService_OK, $newBookings);
 
-        $this->assertNotFalse($bookingService->saveBookings($summerHouseService_OK, $newBookings));
+        try {
+            $bookingService->saveBookings($summerHouseService_OK, $newBookings);
+        } catch (\Exception $e) {
+            $this->fail('Failed to save bookings: ' . $e->getMessage());
+        }
 
-        /**
-         * @var BookingDto[] $bookings
-         */
-        $bookings = $bookingService->getBookings();
+        try {
+            /**
+             * @var BookingDto[] $bookings
+             */
+            $bookings = $bookingService->getBookings();
+        } catch (\Exception $e) {
+            $this->fail('Failed to get bookings: ' . $e->getMessage());
+        }
 
         $ids = [];
 
