@@ -21,6 +21,8 @@ services:
       - XDEBUG_PORT=${XDEBUG_PORT}
     volumes:
       - .:/var/www/project/
+      - /var/www/project/var/
+      - /var/www/project/vendor/
     depends_on:
       - postgres
 

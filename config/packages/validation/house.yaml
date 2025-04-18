@@ -1,0 +1,9 @@
+App\Entity\Booking\House:
+    properties:
+        address:
+            - NotBlank: ~
+            - Length:
+                  max: 255
+        price:
+            - NotBlank: ~
+            - Type: integer

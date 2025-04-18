@@ -1,0 +1,14 @@
+App\Entity\Booking\SummerHouse:
+    properties:
+        bedrooms:
+            - NotBlank: ~
+            - Type: integer
+        distanceFromSea:
+            - NotBlank: ~
+            - Type: integer
+        hasShower:
+            - NotBlank: ~
+            - Type: bool
+        hasBathroom:
+            - NotBlank: ~
+            - Type: bool
