@@ -57,6 +57,44 @@ up-logs-service:
 down:
 	$(DOCKER_COMPOSE) down
 
+# DOCTRINE
+
+.PHONY: doctrine-create
+doctrine-create:
+	$(PHP) bin/console doctrine:database:create
+
+.PHONY: doctrine-diff
+doctrine-diff:
+	$(PHP) bin/console doctrine:migrations:diff
+
+.PHONY: doctrine-migrate
+doctrine-migrate:
+	$(PHP) bin/console doctrine:migrations:migrate
+
+.PHONY: doctrine-fixtures
+doctrine-fixtures:
+	$(PHP) bin/console --env=test doctrine:database:create
+
+.PHONY: doctrine-schema
+doctrine-schema:
+	$(PHP) bin/console --env=test doctrine:schema:create
+
+.PHONY: doctrine-drop
+doctrine-drop:
+	$(PHP) bin/console --env=test doctrine:database:drop --force
+
+.PHONY: doctrine-create-test
+doctrine-create-test:
+	$(PHP) bin/console doctrine:database:create --env=test
+
+.PHONY: doctrine-migrate-test
+doctrine-migrate-test:
+	$(PHP) bin/console doctrine:migrations:migrate -n --env=test
+
+.PHONY: doctrine-drop-test
+doctrine-drop-test:
+	$(PHP) bin/console doctrine:database:drop --force --env=test
+
 # COMPOSER 
 
 .PHONY: composer-install
@@ -73,12 +111,12 @@ psalm:
 
 .PHONY: test-all
 test-all:
-	$(PHP) ./vendor/bin/phpunit --bootstrap vendor/autoload.php
+	$(PHP) ./vendor/bin/phpunit --bootstrap tests/bootstrap.php
 
 .PHONY: test-services
 test-services:
-	$(PHP) ./vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Service
+	$(PHP) ./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/Service
 
 .PHONY: test-controllers
 test-controllers:
-	$(PHP) ./vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Controller
+	$(PHP) ./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/Controller

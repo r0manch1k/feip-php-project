@@ -1,0 +1,25 @@
+App\Entity\Booking:
+    properties:
+        phoneNumber:
+            - Type:
+                  type: string
+            - NotBlank: ~
+            - Regex:
+                  pattern: '/^\+?[0-9]{10,15}$/'
+                  message: 'Phone number must be between 10 and 15 digits long and can start with a +.'
+        house:
+            - NotBlank: ~
+            - Type:
+                  type: App\Entity\House
+        comment:
+            - Length:
+                  max: 255
+        startDate:
+            - Type:
+                  type: \DateTimeInterface
+            - NotBlank: ~
+
+        endDate:
+            - Type:
+                  type: \DateTimeInterface
+            - NotBlank: ~

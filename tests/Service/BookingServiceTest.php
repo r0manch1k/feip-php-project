@@ -5,172 +5,133 @@ namespace App\Tests\Service;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 use App\Service\BookingService;
-use App\Service\SummerHouseService;
-
 use App\Dto\BookingDto;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\DependencyInjection\Container;
+use Doctrine\ORM\EntityManagerInterface;
 
 class BookingServiceTest extends KernelTestCase
 {
     public function testGetBookings(): void
     {
+        /**
+         * @var KernelInterface $kernel
+         */
         $kernel = self::bootKernel();
 
         $this->assertSame('test', $kernel->getEnvironment());
 
-        $testCsvFile = '/tests/csv/bookings_1.csv';
+        /**
+         * @var Container $container
+         */
+        $container = static::getContainer();
 
-        $bookingService = new BookingService($kernel->getProjectDir(), $testCsvFile);
+        /**
+         * @var EntityManagerInterface $entityManager
+         */
+        $entityManager = $container->get('doctrine')->getManager();
+
+        /**
+         * @var BookingService $bookingService
+         */
+        $bookingService = $container->get(BookingService::class);
 
         try {
-            /**
-             * @var BookingDto[] $bookings
-             */
             $bookings = $bookingService->getBookings();
+            $this->assertIsArray($bookings);
+            $this->assertNotEmpty($bookings);
+            $this->assertInstanceOf(BookingDto::class, $bookings[0]);
         } catch (\Exception $e) {
-            $this->fail('Failed to get bookings: ' . $e->getMessage());
-        }
-
-        $this->assertIsArray($bookings);
-
-        for ($i = 0; $i < count($bookings); $i++) {
-            $this->assertInstanceOf(BookingDto::class, $bookings[$i]);
+            $this->fail('failed to get bookings: ' . $e->getMessage());
         }
     }
 
-    public function testSaveBookings(): void
+    public function testSaveBooking(): void
     {
+        /**
+         * @var KernelInterface $kernel
+         */
         $kernel = self::bootKernel();
 
         $this->assertSame('test', $kernel->getEnvironment());
 
-
-        $testCsvFile = '/tests/csv/bookings_2.csv';
-
-        $bookingService = new BookingService($kernel->getProjectDir(), $testCsvFile);
-
-
-        $testSHCsvFile_WA = $kernel->getProjectDir() . '/tests/csv/summerhouses_1.csv';
-
-        $testSHSCsvFile_OK = $kernel->getProjectDir() . '/tests/csv/summerhouses_2.csv';
+        /**
+         * @var Container $container
+         */
+        $container = static::getContainer();
 
         /**
-         * @var SummerHouseService $summerHouseService_WA
+         * @var EntityManagerInterface $entityManager
          */
-        $summerHouseService_WA = new SummerHouseService($kernel->getProjectDir(), $testSHCsvFile_WA);
+        $entityManager = $container->get('doctrine')->getManager();
 
         /**
-         * @var SummerHouseService $summerHouseService_OK
+         * @var BookingService $bookingService
          */
-        $summerHouseService_OK = new SummerHouseService($kernel->getProjectDir(), $testSHSCsvFile_OK);
+        $bookingService = $container->get(BookingService::class);
+
+        /**
+         * @var BookingDto[] $oldBookings
+         */
+        $oldBookings = $bookingService->getBookings();
+
+        try {
+            $bookingDto = new BookingDto(
+                id: null,
+                phoneNumber: '+12223334455',
+                houseId: 10,
+                comment: 'a happy house',
+                startDate: new \DateTime('2027-10-01'),
+                endDate: new \DateTime('2028-10-10')
+            );
+            $bookingService->saveBooking($container->get('validator'), $bookingDto);
+        } catch (\Exception $e) {
+            $this->fail('failed to save booking: ' . $e->getMessage());
+        }
 
         /**
          * @var BookingDto[] $newBookings
          */
-        $newBookings = [
-            new BookingDto(
-                id: -1,
-                phoneNumber: '123456789',
-                houseId: 1,
-                comment: 'test'
-            ),
-            new BookingDto(
-                id: -1,
-                phoneNumber: '987654321',
-                houseId: 2,
-                comment: 'test'
-            ),
-            new BookingDto(
-                id: -1,
-                phoneNumber: '123456789',
-                houseId: 3,
-                comment: 'test'
-            ),
-        ];
+        $newBookings = $bookingService->getBookings();
 
-        $this->expectException(\Exception::class);
-        $bookingService->saveBookings($summerHouseService_WA, $newBookings, true,);
-
-        try {
-            $bookingService->saveBookings($summerHouseService_OK, $newBookings, true,);
-        } catch (\Exception $e) {
-            $this->fail('Failed to save bookings: ' . $e->getMessage());
-        }
-
-        try {
-            /**
-             * @var BookingDto[] $bookings
-             */
-            $bookings = $bookingService->getBookings();
-        } catch (\Exception $e) {
-            $this->fail('Failed to get bookings: ' . $e->getMessage());
-        }
-
-        $this->assertCount(count($newBookings), $bookings);
+        $this->assertCount(count($oldBookings) + 1, $newBookings);
     }
 
-    public function testUniqueIds(): void
+    public function testSaveBookingWithInvalidDate(): void
     {
+        /**
+         * @var KernelInterface $kernel
+         */
         $kernel = self::bootKernel();
 
         $this->assertSame('test', $kernel->getEnvironment());
 
-        $testCsvFile = '/tests/csv/bookings_2.csv';
-
-        $bookingService = new BookingService($kernel->getProjectDir(), $testCsvFile);
-
-        $testSHSCsvFile_OK = '/tests/csv/summerhouses_2.csv';
+        /**
+         * @var Container $container
+         */
+        $container = static::getContainer();
 
         /**
-         * @var SummerHouseService $summerHouseService_OK
+         * @var EntityManagerInterface $entityManager
          */
-        $summerHouseService_OK = new SummerHouseService($kernel->getProjectDir(), $testSHSCsvFile_OK);
+        $entityManager = $container->get('doctrine')->getManager();
 
         /**
-         * @var BookingDto[] $newBookings
+         * @var BookingService $bookingService
          */
-        $newBookings = [
-            new BookingDto(
-                id: -1,
-                phoneNumber: '123456789',
-                houseId: 1,
-                comment: 'test'
-            ),
-            new BookingDto(
-                id: -1,
-                phoneNumber: '987654321',
-                houseId: 2,
-                comment: 'test'
-            ),
-            new BookingDto(
-                id: -1,
-                phoneNumber: '123456789',
-                houseId: 3,
-                comment: 'test'
-            ),
-        ];
+        $bookingService = $container->get(BookingService::class);
 
+        $bookingDto = new BookingDto(
+            id: null,
+            phoneNumber: '+12223334455',
+            houseId: 1,
+            comment: '(^_^)',
+            startDate: new \DateTime('2020-10-01'),
+            endDate: new \DateTime('2030-10-10')
+        );
 
-        try {
-            $bookingService->saveBookings($summerHouseService_OK, $newBookings);
-        } catch (\Exception $e) {
-            $this->fail('Failed to save bookings: ' . $e->getMessage());
-        }
+        $this->expectException(\InvalidArgumentException::class);
 
-        try {
-            /**
-             * @var BookingDto[] $bookings
-             */
-            $bookings = $bookingService->getBookings();
-        } catch (\Exception $e) {
-            $this->fail('Failed to get bookings: ' . $e->getMessage());
-        }
-
-        $ids = [];
-
-        for ($i = 0; $i < count($bookings); $i++) {
-            $ids[] = $bookings[$i]->id;
-        }
-
-        $this->assertCount(count($ids), array_unique($ids));
+        $bookingService->saveBooking($container->get('validator'), $bookingDto);
     }
 }

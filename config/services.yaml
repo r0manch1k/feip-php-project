@@ -22,13 +22,3 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    App\Service\BookingService:
-        arguments:
-            $projectDir: '%kernel.project_dir%'
-            $csvFilePath: '/csv/bookings.csv'
-
-    App\Service\SummerHouseService:
-        arguments:
-            $projectDir: '%kernel.project_dir%'
-            $csvFilePath: '/csv/summerhouses.csv'

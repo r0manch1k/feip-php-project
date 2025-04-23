@@ -4,11 +4,17 @@ namespace App\Entity;
 
 use App\Entity\House;
 use App\Repository\SummerHouseRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SummerHouseRepository::class)]
+#[ORM\Table(name: 'summer_house')]
 class SummerHouse extends House
 {
+    #[ORM\OneToMany(mappedBy: 'house', targetEntity: Booking::class, orphanRemoval: true)]
+    private Collection $bookings;
+
     #[ORM\Column(nullable: true)]
     private ?int $bedrooms = null;
 
@@ -22,9 +28,9 @@ class SummerHouse extends House
     private ?bool $hasBathroom = null;
 
     public function __construct(
-        int $id,
-        ?string $address = null,
-        ?int $price = null,
+        ?int $id,
+        string $address,
+        int $price,
         ?int $bedrooms = null,
         ?int $distanceFromSea = null,
         ?bool $hasShower = null,
@@ -32,12 +38,20 @@ class SummerHouse extends House
     ) {
         parent::__construct($id, $address, $price);
 
+        $this->bookings = new ArrayCollection();
         $this->bedrooms = $bedrooms;
         $this->distanceFromSea = $distanceFromSea;
         $this->hasShower = $hasShower;
         $this->hasBathroom = $hasBathroom;
     }
 
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
 
     public function getBedrooms(): ?int
     {

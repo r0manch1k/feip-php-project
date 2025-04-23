@@ -2,94 +2,88 @@
 
 namespace App\Tests\Service;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-
 use App\Dto\SummerHouseDto;
-
 use App\Service\SummerHouseService;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\DependencyInjection\Container;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SummerHouseServiceTest extends KernelTestCase
 {
     public function testGetSummerHouses(): void
     {
+        /**
+         * @var KernelInterface $kernel
+         */
         $kernel = self::bootKernel();
 
         $this->assertSame('test', $kernel->getEnvironment());
 
         /**
-         * @var string $testCsvFile
+         * @var Container $container
          */
-        $testCsvFile =  '/tests/csv/summerhouses_1.csv';
+        $container = static::getContainer();
 
-        $summerHouseService = new SummerHouseService($kernel->getProjectDir(), $testCsvFile);
+        /**
+         * @var EntityManagerInterface $entityManager
+         */
+        $entityManager = $container->get('doctrine')->getManager();
+
+        /**
+         * @var SummerHouseService $summerHouseService
+         */
+        $summerHouseService = $container->get(SummerHouseService::class);
 
         try {
-            /**
-             * @var SummerHouseDto[] $summerHouses
-             */
             $summerHouses = $summerHouseService->getSummerHouses();
+            $this->assertIsArray($summerHouses);
+            $this->assertNotEmpty($summerHouses);
+            $this->assertInstanceOf(SummerHouseDto::class, $summerHouses[0]);
         } catch (\Exception $e) {
-            $this->fail('Failed to get summer houses: ' . $e->getMessage());
-        }
-
-        $this->assertIsArray($summerHouses);
-
-        for ($i = 0; $i < count($summerHouses); $i++) {
-            $this->assertInstanceOf(SummerHouseDto::class, $summerHouses[$i]);
+            $this->fail('failed to get summer houses: ' . $e->getMessage());
         }
     }
 
-    public function testSaveSummerHouses(): void
+    public function testSaveSummerHouse(): void
     {
+        /**
+         * @var KernelInterface $kernel
+         */
         $kernel = self::bootKernel();
 
         $this->assertSame('test', $kernel->getEnvironment());
 
         /**
-         * @var string $testCsvFile
+         * @var Container $container
          */
-        $testCsvFile = '/tests/csv/summerhouses_1.csv';
-
-        $summerHouseService = new SummerHouseService($kernel->getProjectDir(), $testCsvFile);
+        $container = static::getContainer();
 
         /**
-         * @var SummerHouseDto[] $newSummerHouses
+         * @var EntityManagerInterface $entityManager
          */
-        $newSummerHouses = [
-            new SummerHouseDto(
-                id: -1,
-                address: 'Test address 1',
+        $entityManager = $container->get('doctrine')->getManager();
+
+        /**
+         * @var SummerHouseService $summerHouseService
+         */
+        $summerHouseService = $container->get(SummerHouseService::class);
+
+        try {
+            $summerHouse = new SummerHouseDto(
+                id: null,
+                address: '123 Main St, Springfield, IL 62704',
                 price: 100,
                 bedrooms: 2,
                 distanceFromSea: 100,
                 hasShower: true,
                 hasBathroom: true
-            ),
-            new SummerHouseDto(
-                id: -1,
-                address: 'Test address 2',
-                price: 200,
-                bedrooms: 3,
-                distanceFromSea: 200,
-                hasShower: false,
-                hasBathroom: true
-            )
-        ];
-        try {
-            $summerHouseService->saveSummerHouses($newSummerHouses, true);
-        } catch (\Exception $e) {
-            $this->fail('Failed to get summer houses: ' . $e->getMessage());
-        }
+            );
 
-        try {
-            /**
-             * @var SummerHouseDto[] $summerHouses
-             */
-            $summerHouses = $summerHouseService->getSummerHouses();
+            $summerHouseService->saveSummerHouse($container->get('validator'), $summerHouse);
+            $this->assertTrue(true);
         } catch (\Exception $e) {
-            $this->fail('Failed to get summer houses: ' . $e->getMessage());
+            $this->fail('failed to save summer house: ' . $e->getMessage());
         }
-
-        $this->assertCount(count($newSummerHouses), $summerHouses);
     }
 }

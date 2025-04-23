@@ -2,14 +2,13 @@
 
 namespace App\Controller;
 
+use App\Dto\BookingDto;
+use App\Service\BookingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
-use App\Dto\BookingDto;
-use App\Service\BookingService;
-use App\Service\SummerHouseService;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/booking', name: 'api_booking_')]
 final class BookingController extends AbstractController
@@ -24,9 +23,8 @@ final class BookingController extends AbstractController
         try {
             $bookings = $bookingService->getBookings();
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Failed to open file'], 500);
+            return $this->json(['error' => 'falied to get bookings (error: ' . $e->getMessage() . ')'], 500);
         }
-
         return $this->json($bookings, 200);
     }
 
@@ -35,100 +33,77 @@ final class BookingController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, BookingService $bookingService, SummerHouseService $summerHouseService): JsonResponse
+    public function create(Request $request, BookingService $bookingService, ValidatorInterface $validator): JsonResponse
     {
 
         $data = json_decode($request->getContent(), true);
 
-        // TODO: I will implement validation when migrate to orm
-
-        if (!isset($data['phoneNumber'])) {
-            return $this->json(['error' => 'Missing Phone Number'], 400);
-        }
-
-        if (!isset($data['houseId'])) {
-            return $this->json(['error' => 'Missing House ID'], 400);
-        }
-
-        if (!is_string($data['phoneNumber'])) {
-            return $this->json(['error' => 'Phone Number must be a string'], 400);
-        }
-
-        if (!is_int($data['houseId'])) {
-            return $this->json(['error' => 'House ID must be an integer'], 400);
+        if (!isset($data['phoneNumber'], $data['houseId'], $data['startDate'], $data['endDate'])) {
+            return $this->json(['error' => 'missing required fields'], 400);
         }
 
         $booking = new BookingDto(
-            id: -1,
+            id: null,
             phoneNumber: $data['phoneNumber'],
             houseId: $data['houseId'],
-            comment: $data['comment'] ? $data['comment'] : 'None'
+            startDate: new \DateTime($data['startDate']),
+            endDate: new \DateTime($data['endDate']),
+            comment: $data['comment'],
         );
 
         try {
-            $bookingService->saveBookings($summerHouseService, [$booking]);
+            $bookingService->saveBooking($validator, $booking);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Failed to save booking'], 500);
+            return $this->json(['error' => 'failed to save booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json(['message' => 'Booked successfully'], 201);
+        return $this->json(['message' => 'booked successfully'], 201);
     }
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    #[Route('/change-comment/{bookingId}', name: 'change', methods: ['PUT'])]
-    public function change(Request $request, int $bookingId, BookingService $bookingService, SummerHouseService $summerHouseService): JsonResponse
+    #[Route('/change/{bookingId}', name: 'change', methods: ['PUT'])]
+    public function change(Request $request, int $bookingId, BookingService $bookingService, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['comment'])) {
-            return $this->json(['error' => 'Missing Comment'], 400);
+        if (!isset($data['phoneNumber'], $data['houseId'], $data['startDate'], $data['endDate'])) {
+            return $this->json(['error' => 'missing required fields'], 400);
         }
 
-        if (!is_string($data['comment'])) {
-            return $this->json(['error' => 'Comment must be a string'], 400);
-        }
+        $booking = new BookingDto(
+            id: $bookingId,
+            phoneNumber: $data['phoneNumber'],
+            houseId: $data['houseId'],
+            startDate: new \DateTime($data['startDate']),
+            endDate: new \DateTime($data['endDate']),
+            comment: $data['comment'],
+        );
 
         try {
-            $bookings = $bookingService->getBookings();
+            $bookingService->changeBooking($validator, $booking);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Failed to open file'], 500);
+            return $this->json(['error' => 'failed to change booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
+        return $this->json(['message' => 'booking changed successfully'], 200);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[Route('/delete/{bookingId}', name: 'delete', methods: ['DELETE'])]
+    public function delete(Request $request, int $bookingId, BookingService $bookingService): JsonResponse
+    {
         try {
-            /**
-             * @var bool $updated
-             */
-            $isIdExists = $bookingService->isIdExists($bookingId);
+            $bookingService->deleteBooking($bookingId);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Failed to check ID existence'], 500);
+            return $this->json(['error' => 'failed to delete booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
-
-        if ($isIdExists === false) {
-            return $this->json(['error' => 'Booking not found'], 404);
-        }
-
-        foreach ($bookings as $key => $booking) {
-            if ($booking->id === $bookingId) {
-                $bookings[$key] = new BookingDto(
-                    id: $booking->id,
-                    phoneNumber: $booking->phoneNumber,
-                    houseId: $booking->houseId,
-                    comment: $data['comment']
-                );
-                break;
-            }
-        }
-
-        try {
-            $bookingService->saveBookings($summerHouseService, $bookings, true);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Failed to save booking'], 500);
-        }
-
-        return $this->json(['message' => 'Booking updated successfully', 'booking' => $bookings], 200);
+        return $this->json(['message' => 'deleted successfully'], 200);
     }
 }

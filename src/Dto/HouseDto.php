@@ -7,7 +7,7 @@ namespace App\Dto;
 readonly class HouseDto
 {
     public function __construct(
-        public int $id,
+        public ?int $id,
         public string $address,
         public int $price,
     ) {}
