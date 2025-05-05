@@ -34,4 +34,24 @@ class SummerHouseControllerTest extends WebTestCase
             $this->assertArrayHasKey('hasBathroom', $summerHouse);
         }
     }
+
+    public function testCreateSummerHouse(): void
+    {
+        $client = static::createClient();
+
+        $client->request('POST', '/api/summerhouse/create', [], [], [], json_encode([
+            'address' => '123 Main St, Springfield, AI 62704',
+            'price' => 100,
+            'bedrooms' => 2,
+            'distanceFromSea' => 50,
+            'hasShower' => true,
+            'hasBathroom' => true,
+        ]));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(201);
+
+        $responseData = json_decode($client->getResponse()->getContent(), true);
+        $this->assertNotEmpty($responseData);
+    }
 }

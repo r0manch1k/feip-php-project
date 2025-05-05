@@ -2,65 +2,18 @@
 
 namespace App\Service;
 
+use App\Entity\SummerHouse;
 use App\Dto\SummerHouseDto;
+use App\Repository\SummerHouseRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SummerHouseService
 {
-    /**
-     * @var string
-     */
-    private string $csvFilePath;
-
-    public function __construct(string $projectDir, string $csvFilePath)
-    {
-        $this->csvFilePath = $projectDir . $csvFilePath;
-    }
-
-    /**
-     * @return int
-     */
-    private function getLastId(): int
-    {
-        try {
-            $summerHouses = $this->getSummerHouses();
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to get summer houses: ' . $e->getMessage());
-        }
-
-        /**
-         * @var int $lastId
-         */
-        $lastId = 0;
-
-        foreach ($summerHouses as $summerHouse) {
-            if ($summerHouse->id > $lastId) {
-                $lastId = $summerHouse->id;
-            }
-        }
-
-        return $lastId;
-    }
-
-    /**
-     * @param int $houseId
-     * return bool
-     */
-    public function isHouseIdExists(int $houseId): bool
-    {
-        try {
-            $summerHouses = $this->getSummerHouses();
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to get summer houses: ' . $e->getMessage());
-        }
-
-        foreach ($summerHouses as $summerHouse) {
-            if ($summerHouse->id === $houseId) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private SummerHouseRepository $summerHouseRepository,
+    ) {}
 
     /**
      * @return SummerHouseDto[]
@@ -68,72 +21,111 @@ class SummerHouseService
     public function getSummerHouses(): array
     {
         /**
-         * @var SummerHouseDto[] $summerHouses
+         * @var SummerHouse[] $summerHouses
          */
-        $summerHouses = [];
+        $summerHouses = $this->summerHouseRepository->findAll();
 
-        $file = fopen($this->csvFilePath, 'r');
-
-        if ($file === false) {
-            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
-        }
-
-        while (($data = fgetcsv($file, escape: '\\')) !== false) {
-            if ($data !== null) {
-                $summerHouses[] = new SummerHouseDto(
-                    id: (int)$data[0],
-                    address: $data[1],
-                    price: (int)$data[2],
-                    bedrooms: (int)$data[3],
-                    distanceFromSea: (int)$data[4],
-                    hasShower: (bool)$data[5],
-                    hasBathroom: (bool)$data[6]
-                );
-            }
-        }
-        fclose($file);
+        $summerHouses = array_map(
+            fn(SummerHouse $summerHouse) => new SummerHouseDto(
+                id: $summerHouse->getId(),
+                address: $summerHouse->getAddress(),
+                price: $summerHouse->getPrice(),
+                bedrooms: $summerHouse->getBedrooms(),
+                distanceFromSea: $summerHouse->getDistanceFromSea(),
+                hasShower: $summerHouse->hasShower(),
+                hasBathroom: $summerHouse->hasBathroom()
+            ),
+            $summerHouses
+        );
 
         return $summerHouses;
     }
 
     /**
-     * @param SummerHouseDto[] $summerHouses
-     * @param bool $rewrite
+     * @param SummerHouseDto $summerHouse
      * @return void
      */
-    public function saveSummerHouses(array $summerHouses, bool $rewrite = false): void
+    public function saveSummerHouse(ValidatorInterface $validator, SummerHouseDto $summerHouse): void
     {
         /**
-         * @var int $startId
+         * SummerHouse|null $existingHouse
          */
-        $startId = -1;
+        $existingHouse = $this->summerHouseRepository->findOneBy(['address' => $summerHouse->address]);
 
-        if ($rewrite === false) {
-            try {
-                $startId = $this->getLastId();
-            } catch (\Exception $e) {
-                throw new \Exception('Failed to get last ID: ' . $e->getMessage());
-            }
+        if ($existingHouse) {
+            throw new \InvalidArgumentException('a house with this address already exists: ' . $summerHouse->address);
         }
 
-        $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
+        $newSummerhouse = new SummerHouse(
+            id: null,
+            address: $summerHouse->address,
+            price: $summerHouse->price,
+            bedrooms: $summerHouse->bedrooms,
+            distanceFromSea: $summerHouse->distanceFromSea,
+            hasShower: $summerHouse->hasShower,
+            hasBathroom: $summerHouse->hasBathroom
+        );
 
-        if ($file === false) {
-            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
+        $errors = $validator->validate($newSummerhouse);
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException('validation failed: ' . (string) $errors);
         }
 
-        foreach ($summerHouses as $summerHouse) {
-            fputcsv($file, [
-                ++$startId,
-                $summerHouse->address,
-                $summerHouse->price,
-                $summerHouse->bedrooms,
-                $summerHouse->distanceFromSea,
-                $summerHouse->hasShower,
-                $summerHouse->hasBathroom
-            ], escape: '\\');
+        $this->entityManager->persist($newSummerhouse);
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param SummerHouseDto $summerHouse
+     * @return void
+     */
+    public function changeSummerHouse(ValidatorInterface $validator, SummerHouseDto $summerHouse): void
+    {
+        if ($summerHouse->id === null) {
+            throw new \InvalidArgumentException('house id is null');
         }
 
-        fclose($file);
+        $existingHouse = $this->summerHouseRepository->find($summerHouse->id);
+
+        if (!$existingHouse) {
+            throw new \InvalidArgumentException('house not found (id: ' . $summerHouse->id . ')');
+        }
+
+        $existingHouse->setAddress($summerHouse->address);
+        $existingHouse->setPrice($summerHouse->price);
+        $existingHouse->setBedrooms($summerHouse->bedrooms);
+        $existingHouse->setDistanceFromSea($summerHouse->distanceFromSea);
+        $existingHouse->setHasShower($summerHouse->hasShower);
+        $existingHouse->setHasBathroom($summerHouse->hasBathroom);
+
+        $errors = $validator->validate($existingHouse);
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException('validation failed: ' . (string) $errors);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param int $houseId
+     * @return void
+     */
+    public function deleteSummerHouse(int $houseId): void
+    {
+        // there will be permitions check
+
+        /**
+         * SummerHouse|null $existingHouse
+         */
+        $summerHouse = $this->summerHouseRepository->find($houseId);
+
+        if (!$summerHouse) {
+            throw new \InvalidArgumentException('house not found (id: ' . $houseId . ')');
+        }
+
+        $this->entityManager->remove($summerHouse);
+
+        $this->entityManager->flush();
     }
 }

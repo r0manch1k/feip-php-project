@@ -2,64 +2,20 @@
 
 namespace App\Service;
 
+use App\Entity\Booking;
+use App\Entity\SummerHouse;
 use App\Dto\BookingDto;
-use App\Service\SummerHouseService;
+use App\Repository\BookingRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BookingService
 {
-    /**
-     * @var string
-     */
-    private string $csvFilePath;
-
-    public function __construct(string $projectDir, string $csvFilePath)
-    {
-        $this->csvFilePath = $projectDir . $csvFilePath;
-    }
-
-    /**
-     * @return int
-     */
-    private function getLastId(): int
-    {
-        try {
-            $bookings = $this->getBookings();
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to get bookings: ' . $e->getMessage());
-        }
-
-
-        $lastId = 0;
-
-        foreach ($bookings as $booking) {
-            if ($booking->id > $lastId) {
-                $lastId = $booking->id;
-            }
-        }
-
-        return $lastId;
-    }
-
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function isIdExists(int $id): bool
-    {
-        try {
-            $bookings = $this->getBookings();
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to get bookings: ' . $e->getMessage());
-        }
-
-        foreach ($bookings as $booking) {
-            if ($booking->id === $id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private BookingRepository $bookingRepository,
+    ) {}
 
     /**
      * @return BookingDto[]
@@ -67,72 +23,126 @@ class BookingService
     public function getBookings(): array
     {
         /**
-         * @var BookingDto[] $bookings
+         * @var Booking[] $bookings
          */
-        $bookings = [];
+        $bookings = $this->bookingRepository->findAll();
 
-        $file = fopen($this->csvFilePath, 'r');
-
-        if ($file === false) {
-            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
-        }
-
-        while (($data = fgetcsv($file, escape: '\\')) !== false) {
-            if ($data !== null) {
-                $bookings[] = new BookingDto(
-                    (int)$data[0],
-                    $data[1],
-                    (int)$data[2],
-                    $data[3]
-                );
-            }
-        }
-        fclose($file);
+        $bookings = array_map(
+            fn(Booking $booking) => new BookingDto(
+                id: $booking->getId(),
+                phoneNumber: $booking->getPhoneNumber(),
+                houseId: $booking->getHouse()->getId() ?? throw new \LogicException('house cannot be null'),
+                comment: $booking->getComment(),
+                startDate: $booking->getStartDate(),
+                endDate: $booking->getEndDate()
+            ),
+            $bookings
+        );
 
         return $bookings;
     }
 
     /**
-     * @param BookingDto[] $bookings
-     * @param bool $rewrite
+     * @param BookingDto $booking
      * @return void
      */
-    public function saveBookings(SummerHouseService $summerHouseService, array $bookings, bool $rewrite = false): void
+    public function saveBooking(ValidatorInterface $validator, BookingDto $booking): void
     {
-        for ($i = 0; $i < count($bookings); $i++) {
-            if (!$summerHouseService->isHouseIdExists($bookings[$i]->houseId)) {
-                throw new \Exception('House ID ' . $bookings[$i]->houseId . ' does not exist.');
-            }
+        $house = $this->entityManager->getRepository(SummerHouse::class)->find($booking->houseId);
+
+        if (!$house) {
+            throw new EntityNotFoundException('house doesn\'t exist (id: ' . $booking->houseId . ')');
         }
+
+        $newBooking = new Booking(
+            id: null,
+            phoneNumber: $booking->phoneNumber,
+            house: $house,
+            startDate: $booking->startDate,
+            endDate: $booking->endDate,
+            comment: $booking->comment
+        );
+
+        $errors = $validator->validate($newBooking);
+
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException('validation failed: ' . (string) $errors);
+        }
+
+        if ($newBooking->getStartDate() > $newBooking->getEndDate()) {
+            throw new \InvalidArgumentException('start date is after end date');
+        }
+
+        $activeBookings = $this->bookingRepository->findActiveBookings($house, $booking->startDate, $booking->endDate);
+
+        if (count($activeBookings) > 0) {
+            throw new \InvalidArgumentException('house is already booked (id: ' . (string) $house->getId() . ')');
+        }
+
+        $this->entityManager->persist($newBooking);
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param BookingDto $booking
+     * @return void
+     */
+    public function changeBooking(ValidatorInterface $validator, BookingDto $booking): void
+    {
+        if ($booking->id === null) {
+            throw new \InvalidArgumentException('booking id is null');
+        }
+
+        $existingBooking = $this->bookingRepository->find($booking->id);
+
+        if (!$existingBooking) {
+            throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $booking->id . ')');
+        }
+
+        $existingBooking->setComment($booking->comment);
+        $existingBooking->setPhoneNumber($booking->phoneNumber);
+        $existingBooking->setStartDate($booking->startDate);
+        $existingBooking->setEndDate($booking->endDate);
+
+        $house = $this->entityManager->getRepository(SummerHouse::class)->find($booking->houseId);
+
+        if (!$house) {
+            throw new EntityNotFoundException('house doesn\'t exist (id: ' . $booking->houseId . ')');
+        }
+
+        $existingBooking->setHouse($house);
+
+        $errors = $validator->validate($existingBooking);
+
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException('validation failed: ' . (string) $errors);
+        }
+
+        $this->entityManager->persist($existingBooking);
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param int $bookingId
+     * @return void
+     */
+    public function deleteBooking(int $bookingId): void
+    {
+        // there will be permitions check
 
         /**
-         * @var int $startId
+         * Booking|null $existingBooking
          */
-        $startId = -1;
+        $booking = $this->bookingRepository->find($bookingId);
 
-        if ($rewrite === false) {
-            try {
-                $startId = $this->getLastId();
-            } catch (\Exception $e) {
-                throw new \Exception('Failed to get last ID: ' . $e->getMessage());
-            }
+        if (!$booking) {
+            throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $bookingId . ')');
         }
 
-        $file = fopen($this->csvFilePath, $rewrite ? 'w' : 'a');
+        $this->entityManager->remove($booking);
 
-        if ($file === false) {
-            throw new \RuntimeException('Failed to open file: ' . $this->csvFilePath);
-        }
-
-        foreach ($bookings as $booking) {
-            fputcsv($file, [
-                ++$startId,
-                $booking->phoneNumber,
-                $booking->houseId,
-                $booking->comment
-            ], escape: '\\');
-        }
-
-        fclose($file);
+        $this->entityManager->flush();
     }
 }

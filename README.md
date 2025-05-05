@@ -7,6 +7,7 @@ Run this commands to setup environment:
 ```
 cp .env .env.local
 cp .env.dev .env.dev.local
+cp .env.test .env.test.local
 ```
 
 Build Docker images:
@@ -19,6 +20,13 @@ Install dependencies:
 
 ```
 make composer-install
+```
+
+Make migrations:
+
+```
+make doctrine-diff
+make doctrine-migrate
 ```
 
 Run the application:
@@ -41,6 +49,49 @@ or...
 make test-services
 make test-controllers
 ```
+
+### Api Documentation
+
+- `GET /api/summerhouse/list` - Retrieves a list of all summer houses
+
+- `POST /api/summerhouse/create` - Creates a new summer house
+
+  Request body:
+
+  ```json
+  {
+    "address": "123 Main St, City, ST 12345",
+    "price": 10000,
+    "bedrooms": 3,
+    "distanceFromSea": 500,
+    "hasShower": true,
+    "hasBathroom": true
+  }
+  ```
+
+- `PUT /api/summerhouse/change/{houseId}` - Updates the details of an existing summer house (full request body must be provided)
+
+- `DELETE /api/summerhouse/delete/{houseId}` - Deletes a summer house by its ID
+
+- `GET /api/booking/list` - Retrieves a list of all bookings
+
+- `POST /api/booking/create` - Creates a new booking
+
+  Request body:
+
+  ```json
+  {
+    "phoneNumber": "+12223334455",
+    "houseId": 1,
+    "startDate": "2023-01-20 13:30:00",
+    "endDate": "2024-01-20 13:30:00",
+    "comment": "Two-floor loft in the middle of the city"
+  }
+  ```
+
+- `PUT /api/booking/change/{bookingId}` - Updates the details of an existing booking (full request body must be provided)
+
+- `DELETE /api/booking/delete/{bookingId}` - Deletes a booking by its ID
 
 _OPTIONAL_
 

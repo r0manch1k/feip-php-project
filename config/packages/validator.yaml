@@ -2,14 +2,10 @@ framework:
     validation:
         # Enables validator auto-mapping support.
         # For instance, basic validation constraints will be inferred from Doctrine's metadata.
+        mapping:
+            paths: ['%kernel.project_dir%/config/validation/']
         auto_mapping:
             App\Entity\: []
-            App\Entity\Booking\:
-                [
-                    'App\Entity\Booking\Booking',
-                    'App\Entity\Booking\House',
-                    'App\Entity\Booking\SummerHouse:',
-                ]
 
 when@test:
     framework:

@@ -26,21 +26,24 @@ class BookingControllerTest extends WebTestCase
             $booking = $responseData[0];
 
             $this->assertArrayHasKey('id', $booking);
+            $this->assertArrayHasKey('phoneNumber', $booking);
             $this->assertArrayHasKey('houseId', $booking);
+            $this->assertArrayHasKey('startDate', $booking);
+            $this->assertArrayHasKey('endDate', $booking);
             $this->assertArrayHasKey('comment', $booking);
         }
     }
 
     public function testCreateBooking(): void
     {
-        // TODO: Implement using test db
-
         $client = static::createClient();
 
         $client->request('POST', '/api/booking/create', [], [], [], json_encode([
-            'phoneNumber' => '123456789',
-            'houseId' => 1,
-            'comment' => 'Test comment',
+            'phoneNumber' => '+37061234567',
+            'houseId' => 11,
+            'comment' => '',
+            'startDate' => '2027-10-01 00:00:00',
+            'endDate' => '2028-10-10 00:00:00',
         ]));
 
         $this->assertResponseIsSuccessful();
@@ -50,12 +53,16 @@ class BookingControllerTest extends WebTestCase
         $this->assertNotEmpty($responseData);
     }
 
-    public function testChangeComment(): void
+    public function testChangeBooking(): void
     {
         $client = static::createClient();
 
-        $client->request('PUT', '/api/booking/change-comment/5', [], [], [], json_encode([
-            'comment' => 'New comment',
+        $client->request('PUT', '/api/booking/change/5', [], [], [], json_encode([
+            'phoneNumber' => '+37061234567',
+            'houseId' => 12,
+            'startDate' => '2026-10-01 00:00:00',
+            'endDate' => '2026-10-10 00:00:00',
+            'comment' => 'Hurry up!',
         ]));
 
         $this->assertResponseIsSuccessful();
