@@ -10,5 +10,6 @@ readonly class HouseDto
         public ?int $id,
         public string $address,
         public int $price,
-    ) {}
+    ) {
+    }
 }

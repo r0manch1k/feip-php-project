@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Entity\Booking;
 use App\Entity\SummerHouse;
-use Override;
-use Faker\Factory;
-use Faker\Generator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+use Faker\Generator;
+use Override;
 
 class BookingDataFixtures extends Fixture
 {
@@ -21,7 +23,7 @@ class BookingDataFixtures extends Fixture
          * @var SummerHouse[] $summerHouses
          */
         $summerHouses = [];
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; ++$i) {
             $summerHouse = new SummerHouse(
                 id: $i,
                 address: $this->generateValidAddress($faker),
@@ -36,7 +38,7 @@ class BookingDataFixtures extends Fixture
             $manager->persist($summerHouse);
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; ++$i) {
             $booking = new Booking(
                 id: $i,
                 phoneNumber: $faker->e164PhoneNumber(),
@@ -51,9 +53,6 @@ class BookingDataFixtures extends Fixture
         $manager->flush();
     }
 
-    /**
-     * @return string
-     */
     public function generateValidAddress(Generator $faker): string
     {
         $buildingNumber = $faker->buildingNumber();

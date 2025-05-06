@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Dto\SummerHouseDto;
 use App\Service\SummerHouseService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,26 +16,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/summerhouse', name: 'api_summerhouse_')]
 final class SummerHouseController extends AbstractController
 {
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(Request $request, SummerHouseService $summerHouseService): JsonResponse
     {
         try {
             $summerHouses = $summerHouseService->getSummerHouses();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->json(['error' => 'failed to open file'], 500);
         }
 
         return $this->json($summerHouses);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request, SummerHouseService $summerHouseService, ValidatorInterface $validator): JsonResponse
     {
@@ -55,17 +50,13 @@ final class SummerHouseController extends AbstractController
 
         try {
             $summerHouseService->saveSummerHouse($validator, $summerHouse);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'failed to save summer house (error: ' . $e->getMessage() . ')'], 500);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'failed to save summer house (error: '.$e->getMessage().')'], 500);
         }
 
         return $this->json(['message' => 'booked successfully'], 201);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     #[Route('/change/{houseId}', name: 'change', methods: ['PUT'])]
     public function change(Request $request, int $houseId, SummerHouseService $summerHouseService, ValidatorInterface $validator): JsonResponse
     {
@@ -87,24 +78,20 @@ final class SummerHouseController extends AbstractController
 
         try {
             $summerHouseService->changeSummerHouse($validator, $summerHouse);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'failed to update summer house (error: ' . $e->getMessage() . ')'], 500);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'failed to update summer house (error: '.$e->getMessage().')'], 500);
         }
 
         return $this->json(['message' => 'updated successfully'], 200);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     #[Route('/delete/{houseId}', name: 'delete', methods: ['DELETE'])]
     public function delete(Request $request, int $houseId, SummerHouseService $summerHouseService): JsonResponse
     {
         try {
             $summerHouseService->deleteSummerHouse($houseId);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'failed to delete summer house (error: ' . $e->getMessage() . ')'], 500);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'failed to delete summer house (error: '.$e->getMessage().')'], 500);
         }
 
         return $this->json(['message' => 'deleted successfully'], 200);
