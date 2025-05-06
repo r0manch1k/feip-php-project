@@ -39,6 +39,11 @@
                 <directory name='tests' />
             </errorLevel>
         </PossiblyUndefinedIntArrayOffset>
+        <ArgumentTypeCoercion>
+            <errorLevel type='suppress'>
+                <directory name='tests' />
+            </errorLevel>
+        </ArgumentTypeCoercion>
     </issueHandlers>
 
     <plugins>

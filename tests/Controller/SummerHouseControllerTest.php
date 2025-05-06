@@ -49,14 +49,25 @@ class SummerHouseControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api/summerhouse/create', [], [], [], json_encode([
+        $payload = json_encode([
             'address' => '123 Main St, Springfield, AI 62704',
             'price' => 100,
             'bedrooms' => 2,
             'distanceFromSea' => 50,
             'hasShower' => true,
             'hasBathroom' => true,
-        ]));
+        ]);
+
+        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+
+        $client->request(
+            'POST',
+            '/api/summerhouse/create',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $payload
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);

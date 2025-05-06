@@ -48,16 +48,24 @@ class BookingControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        /*
-         * @psalm-suppress PossiblyFalseArgument
-         */
-        $client->request('POST', '/api/booking/create', [], [], [], json_encode([
+        $payload = json_encode([
             'phoneNumber' => '+37061234567',
             'houseId' => 11,
             'comment' => '',
             'startDate' => '2027-10-01 00:00:00',
             'endDate' => '2028-10-10 00:00:00',
-        ]));
+        ]);
+
+        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+
+        $client->request(
+            'POST',
+            '/api/booking/create',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $payload
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);
@@ -76,20 +84,33 @@ class BookingControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        /*
-         * @psalm-suppress PossiblyFalseArgument
-         */
-        $client->request('PUT', '/api/booking/change/5', [], [], [], json_encode([
+        $payload = json_encode([
             'phoneNumber' => '+37061234567',
             'houseId' => 12,
             'startDate' => '2026-10-01 00:00:00',
             'endDate' => '2026-10-10 00:00:00',
             'comment' => 'Hurry up!',
-        ]));
+        ]);
+
+        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+
+        $client->request(
+            'PUT',
+            '/api/booking/change/5',
+            [],
+            [],
+            [],
+            $payload
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
+        $this->assertNotFalse($client->getResponse()->getContent());
+
+        /**
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $responseData = json_decode($client->getResponse()->getContent(), true);
         $this->assertNotEmpty($responseData);
     }
