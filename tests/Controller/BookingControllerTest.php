@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -9,13 +11,19 @@ class BookingControllerTest extends WebTestCase
     public function testGetBookings(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/api/booking/list');
+
+        $client->request('GET', '/api/booking/list');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
+        $this->assertNotFalse($client->getResponse()->getContent());
+
+        /**
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $responseData = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertIsArray($responseData);
@@ -23,6 +31,8 @@ class BookingControllerTest extends WebTestCase
         $this->assertNotEmpty($responseData);
 
         if (!empty($responseData)) {
+            $this->assertIsArray($responseData[0]);
+
             $booking = $responseData[0];
 
             $this->assertArrayHasKey('id', $booking);
@@ -38,6 +48,9 @@ class BookingControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        /*
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $client->request('POST', '/api/booking/create', [], [], [], json_encode([
             'phoneNumber' => '+37061234567',
             'houseId' => 11,
@@ -49,7 +62,13 @@ class BookingControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);
 
+        $this->assertNotFalse($client->getResponse()->getContent());
+
+        /**
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $responseData = json_decode($client->getResponse()->getContent(), true);
+
         $this->assertNotEmpty($responseData);
     }
 
@@ -57,6 +76,9 @@ class BookingControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        /*
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $client->request('PUT', '/api/booking/change/5', [], [], [], json_encode([
             'phoneNumber' => '+37061234567',
             'houseId' => 12,

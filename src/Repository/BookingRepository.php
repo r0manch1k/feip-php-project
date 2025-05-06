@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Booking;
 use App\Entity\SummerHouse;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,7 +23,7 @@ class BookingRepository extends ServiceEntityRepository
     /**
      * @return Booking[]
      */
-    public function findActiveBookings(SummerHouse $house, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    public function findActiveBookings(SummerHouse $house, DateTimeInterface $startDate, DateTimeInterface $endDate): array
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.house = :house')

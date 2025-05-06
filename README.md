@@ -50,6 +50,15 @@ make test-services
 make test-controllers
 ```
 
+_FORMATTING AND LINTING_
+
+```
+make phpcs
+make phpcbf
+make php-cs-fixer
+make psalm
+```
+
 ### Api Documentation
 
 - `GET /api/summerhouse/list` - Retrieves a list of all summer houses
@@ -126,7 +135,9 @@ Format settings:
     "xdebug.php-debug",
     "getpsalm.psalm-vscode-plugin",
     "redhat.vscode-xml",
-    "redhat.vscode-yaml"
+    "redhat.vscode-yaml",
+    "bmewburn.vscode-intelephense-client",
+    "junstyle.php-cs-fixer"
   ]
 }
 ```
@@ -170,7 +181,13 @@ Format settings:
   "intelephense.format.enable": true,
 
   "[php]": {
-    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
-  }
+    "editor.defaultFormatter": "junstyle.php-cs-fixer"
+  },
+
+  "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+  "php-cs-fixer.config": ".php-cs-fixer.dist.php",
+  "php-cs-fixer.onsave": true,
+  "php-cs-fixer.allowRisky": true,
+  "php-cs-fixer.ignorePHPVersion": true
 }
 ```

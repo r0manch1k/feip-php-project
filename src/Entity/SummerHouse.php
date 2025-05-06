@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use App\Entity\House;
 use App\Repository\SummerHouseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,7 +35,7 @@ class SummerHouse extends House
         ?int $bedrooms = null,
         ?int $distanceFromSea = null,
         ?bool $hasShower = null,
-        ?bool $hasBathroom = null
+        ?bool $hasBathroom = null,
     ) {
         parent::__construct($id, $address, $price);
 

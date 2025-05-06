@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Dto\SummerHouseDto;
 use App\Service\SummerHouseService;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\DependencyInjection\Container;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class SummerHouseServiceTest extends KernelTestCase
 {
@@ -40,8 +43,8 @@ class SummerHouseServiceTest extends KernelTestCase
             $this->assertIsArray($summerHouses);
             $this->assertNotEmpty($summerHouses);
             $this->assertInstanceOf(SummerHouseDto::class, $summerHouses[0]);
-        } catch (\Exception $e) {
-            $this->fail('failed to get summer houses: ' . $e->getMessage());
+        } catch (Exception $e) {
+            $this->fail('failed to get summer houses: '.$e->getMessage());
         }
     }
 
@@ -82,8 +85,8 @@ class SummerHouseServiceTest extends KernelTestCase
 
             $summerHouseService->saveSummerHouse($container->get('validator'), $summerHouse);
             $this->assertTrue(true);
-        } catch (\Exception $e) {
-            $this->fail('failed to save summer house: ' . $e->getMessage());
+        } catch (Exception $e) {
+            $this->fail('failed to save summer house: '.$e->getMessage());
         }
     }
 }

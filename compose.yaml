@@ -19,6 +19,7 @@ services:
       context: ./docker/php
     environment:
       - XDEBUG_PORT=${XDEBUG_PORT}
+      - PHP_CS_FIXER_IGNORE_ENV=${PHP_CS_FIXER_IGNORE_ENV}
     volumes:
       - .:/var/www/project/
       - /var/www/project/var/
