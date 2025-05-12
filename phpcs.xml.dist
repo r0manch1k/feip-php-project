@@ -7,7 +7,7 @@
     <arg name='extensions' value='php' />
     <arg value='sp' />
 
-    <!-- <rule ref='PSR12' /> -->
+    <rule ref='PSR12' />
 
     <file>.</file>
 

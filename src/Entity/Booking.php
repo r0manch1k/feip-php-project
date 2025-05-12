@@ -25,7 +25,7 @@ class Booking
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE', name: 'house_id', referencedColumnName: 'id')]
     private SummerHouse $house;
 
-    #[ORM\Column(length: 255, nullable: true, )]
+    #[ORM\Column(length: 255, nullable: true,)]
     private ?string $comment = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

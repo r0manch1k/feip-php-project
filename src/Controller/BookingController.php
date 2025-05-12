@@ -30,8 +30,11 @@ final class BookingController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, BookingService $bookingService, ValidatorInterface $validator): JsonResponse
-    {
+    public function create(
+        Request $request,
+        BookingService $bookingService,
+        ValidatorInterface $validator,
+    ): JsonResponse {
 
         $data = json_decode($request->getContent(), true);
 
@@ -58,8 +61,12 @@ final class BookingController extends AbstractController
     }
 
     #[Route('/change/{bookingId}', name: 'change', methods: ['PUT'])]
-    public function change(Request $request, int $bookingId, BookingService $bookingService, ValidatorInterface $validator): JsonResponse
-    {
+    public function change(
+        Request $request,
+        int $bookingId,
+        BookingService $bookingService,
+        ValidatorInterface $validator,
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['phoneNumber'], $data['houseId'], $data['startDate'], $data['endDate'])) {

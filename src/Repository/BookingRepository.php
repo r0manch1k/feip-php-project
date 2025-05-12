@@ -23,8 +23,11 @@ class BookingRepository extends ServiceEntityRepository
     /**
      * @return Booking[]
      */
-    public function findActiveBookings(SummerHouse $house, DateTimeInterface $startDate, DateTimeInterface $endDate): array
-    {
+    public function findActiveBookings(
+        SummerHouse $house,
+        DateTimeInterface $startDate,
+        DateTimeInterface $endDate,
+    ): array {
         return $this->createQueryBuilder('b')
             ->andWhere('b.house = :house')
             ->andWhere('

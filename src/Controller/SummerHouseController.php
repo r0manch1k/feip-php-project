@@ -29,8 +29,11 @@ final class SummerHouseController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, SummerHouseService $summerHouseService, ValidatorInterface $validator): JsonResponse
-    {
+    public function create(
+        Request $request,
+        SummerHouseService $summerHouseService,
+        ValidatorInterface $validator,
+    ): JsonResponse {
 
         $data = json_decode($request->getContent(), true);
 
@@ -58,8 +61,12 @@ final class SummerHouseController extends AbstractController
     }
 
     #[Route('/change/{houseId}', name: 'change', methods: ['PUT'])]
-    public function change(Request $request, int $houseId, SummerHouseService $summerHouseService, ValidatorInterface $validator): JsonResponse
-    {
+    public function change(
+        Request $request,
+        int $houseId,
+        SummerHouseService $summerHouseService,
+        ValidatorInterface $validator,
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['address'], $data['price'])) {
@@ -86,8 +93,11 @@ final class SummerHouseController extends AbstractController
     }
 
     #[Route('/delete/{houseId}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Request $request, int $houseId, SummerHouseService $summerHouseService): JsonResponse
-    {
+    public function delete(
+        Request $request,
+        int $houseId,
+        SummerHouseService $summerHouseService,
+    ): JsonResponse {
         try {
             $summerHouseService->deleteSummerHouse($houseId);
         } catch (Exception $e) {
