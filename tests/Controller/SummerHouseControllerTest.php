@@ -21,10 +21,11 @@ class SummerHouseControllerTest extends WebTestCase
 
         $this->assertNotFalse($client->getResponse()->getContent());
 
-        /**
-         * @psalm-suppress PossiblyFalseArgument
-         */
-        $responseData = json_decode($client->getResponse()->getContent(), true);
+        $content = $client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $responseData = json_decode($content, true);
 
         $this->assertIsArray($responseData);
 
@@ -72,10 +73,11 @@ class SummerHouseControllerTest extends WebTestCase
 
         $this->assertNotFalse($client->getResponse()->getContent());
 
-        /**
-         * @psalm-suppress PossiblyFalseArgument
-         */
-        $responseData = json_decode($client->getResponse()->getContent(), true);
+        $content = $client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $responseData = json_decode($content, true);
 
         $this->assertNotEmpty($responseData);
     }

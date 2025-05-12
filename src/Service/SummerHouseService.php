@@ -47,9 +47,6 @@ class SummerHouseService
 
     public function saveSummerHouse(ValidatorInterface $validator, SummerHouseDto $summerHouse): void
     {
-        /**
-         * SummerHouse|null $existingHouse.
-         */
         $existingHouse = $this->summerHouseRepository->findOneBy(['address' => $summerHouse->address]);
 
         if ($existingHouse) {
@@ -108,7 +105,7 @@ class SummerHouseService
         // there will be permitions check
 
         /**
-         * SummerHouse|null $existingHouse.
+         * @ var SummerHouse|null $existingHouse
          */
         $summerHouse = $this->summerHouseRepository->find($houseId);
 
