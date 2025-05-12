@@ -28,7 +28,7 @@ class SummerHouseServiceTest extends KernelTestCase
             $this->assertNotEmpty($summerHouses);
             $this->assertInstanceOf(SummerHouseDto::class, $summerHouses[0]);
         } catch (Exception $e) {
-            $this->fail('failed to get summer houses: '.$e->getMessage());
+            $this->fail('failed to get summer houses: ' . $e->getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ class SummerHouseServiceTest extends KernelTestCase
             $summerHouseService->saveSummerHouse($container->get('validator'), $summerHouse);
             $this->assertTrue(true);
         } catch (Exception $e) {
-            $this->fail('failed to save summer house: '.$e->getMessage());
+            $this->fail('failed to save summer house: ' . $e->getMessage());
         }
     }
 }

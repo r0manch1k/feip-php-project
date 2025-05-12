@@ -30,19 +30,17 @@ class SummerHouseControllerTest extends WebTestCase
 
         $this->assertNotEmpty($responseData);
 
-        if (!empty($responseData)) {
-            $this->assertIsArray($responseData[0]);
+        $this->assertIsArray($responseData[0]);
 
-            $summerHouse = $responseData[0];
+        $summerHouse = $responseData[0];
 
-            $this->assertArrayHasKey('id', $summerHouse);
-            $this->assertArrayHasKey('address', $summerHouse);
-            $this->assertArrayHasKey('price', $summerHouse);
-            $this->assertArrayHasKey('bedrooms', $summerHouse);
-            $this->assertArrayHasKey('distanceFromSea', $summerHouse);
-            $this->assertArrayHasKey('hasShower', $summerHouse);
-            $this->assertArrayHasKey('hasBathroom', $summerHouse);
-        }
+        $this->assertArrayHasKey('id', $summerHouse);
+        $this->assertArrayHasKey('address', $summerHouse);
+        $this->assertArrayHasKey('price', $summerHouse);
+        $this->assertArrayHasKey('bedrooms', $summerHouse);
+        $this->assertArrayHasKey('distanceFromSea', $summerHouse);
+        $this->assertArrayHasKey('hasShower', $summerHouse);
+        $this->assertArrayHasKey('hasBathroom', $summerHouse);
     }
 
     public function testCreateSummerHouse(): void

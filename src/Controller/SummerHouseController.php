@@ -51,7 +51,7 @@ final class SummerHouseController extends AbstractController
         try {
             $summerHouseService->saveSummerHouse($validator, $summerHouse);
         } catch (Exception $e) {
-            return $this->json(['error' => 'failed to save summer house (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'failed to save summer house (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json(['message' => 'booked successfully'], 201);
@@ -79,7 +79,7 @@ final class SummerHouseController extends AbstractController
         try {
             $summerHouseService->changeSummerHouse($validator, $summerHouse);
         } catch (Exception $e) {
-            return $this->json(['error' => 'failed to update summer house (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'failed to update summer house (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json(['message' => 'updated successfully'], 200);
@@ -91,7 +91,7 @@ final class SummerHouseController extends AbstractController
         try {
             $summerHouseService->deleteSummerHouse($houseId);
         } catch (Exception $e) {
-            return $this->json(['error' => 'failed to delete summer house (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'failed to delete summer house (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json(['message' => 'deleted successfully'], 200);

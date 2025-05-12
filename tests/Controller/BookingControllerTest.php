@@ -30,18 +30,16 @@ class BookingControllerTest extends WebTestCase
 
         $this->assertNotEmpty($responseData);
 
-        if (!empty($responseData)) {
-            $this->assertIsArray($responseData[0]);
+        $this->assertIsArray($responseData[0]);
 
-            $booking = $responseData[0];
+        $booking = $responseData[0];
 
-            $this->assertArrayHasKey('id', $booking);
-            $this->assertArrayHasKey('phoneNumber', $booking);
-            $this->assertArrayHasKey('houseId', $booking);
-            $this->assertArrayHasKey('startDate', $booking);
-            $this->assertArrayHasKey('endDate', $booking);
-            $this->assertArrayHasKey('comment', $booking);
-        }
+        $this->assertArrayHasKey('id', $booking);
+        $this->assertArrayHasKey('phoneNumber', $booking);
+        $this->assertArrayHasKey('houseId', $booking);
+        $this->assertArrayHasKey('startDate', $booking);
+        $this->assertArrayHasKey('endDate', $booking);
+        $this->assertArrayHasKey('comment', $booking);
     }
 
     public function testCreateBooking(): void

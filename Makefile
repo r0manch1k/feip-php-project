@@ -146,8 +146,3 @@ phpcbf-file:
 .PHONY: php-cs-fixer
 php-cs-fixer:
 	$(PHP) ./vendor/bin/php-cs-fixer --allow-risky=yes fix
-
-
-	
-	
-	

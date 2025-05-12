@@ -23,7 +23,7 @@ final class BookingController extends AbstractController
         try {
             $bookings = $bookingService->getBookings();
         } catch (Exception $e) {
-            return $this->json(['error' => 'falied to get bookings (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'falied to get bookings (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json($bookings, 200);
@@ -51,7 +51,7 @@ final class BookingController extends AbstractController
         try {
             $bookingService->saveBooking($validator, $booking);
         } catch (Exception $e) {
-            return $this->json(['error' => 'failed to save booking (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'failed to save booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json(['message' => 'booked successfully'], 201);
@@ -78,7 +78,7 @@ final class BookingController extends AbstractController
         try {
             $bookingService->changeBooking($validator, $booking);
         } catch (Exception $e) {
-            return $this->json(['error' => 'failed to change booking (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'failed to change booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json(['message' => 'booking changed successfully'], 200);
@@ -90,7 +90,7 @@ final class BookingController extends AbstractController
         try {
             $bookingService->deleteBooking($bookingId);
         } catch (Exception $e) {
-            return $this->json(['error' => 'failed to delete booking (error: '.$e->getMessage().')'], 500);
+            return $this->json(['error' => 'failed to delete booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
         return $this->json(['message' => 'deleted successfully'], 200);

@@ -52,7 +52,7 @@ class BookingService
         $house = $this->entityManager->getRepository(SummerHouse::class)->find($booking->houseId);
 
         if (!$house) {
-            throw new EntityNotFoundException('house doesn\'t exist (id: '.$booking->houseId.')');
+            throw new EntityNotFoundException('house doesn\'t exist (id: ' . $booking->houseId . ')');
         }
 
         $newBooking = new Booking(
@@ -67,7 +67,7 @@ class BookingService
         $errors = $validator->validate($newBooking);
 
         if (count($errors) > 0) {
-            throw new InvalidArgumentException('validation failed: '.(string) $errors);
+            throw new InvalidArgumentException('validation failed: ' . (string) $errors);
         }
 
         if ($newBooking->getStartDate() > $newBooking->getEndDate()) {
@@ -77,7 +77,7 @@ class BookingService
         $activeBookings = $this->bookingRepository->findActiveBookings($house, $booking->startDate, $booking->endDate);
 
         if (count($activeBookings) > 0) {
-            throw new InvalidArgumentException('house is already booked (id: '.(string) $house->getId().')');
+            throw new InvalidArgumentException('house is already booked (id: ' . (string) $house->getId() . ')');
         }
 
         $this->entityManager->persist($newBooking);
@@ -94,7 +94,7 @@ class BookingService
         $existingBooking = $this->bookingRepository->find($booking->id);
 
         if (!$existingBooking) {
-            throw new EntityNotFoundException('booking doesn\'t exist (id: '.$booking->id.')');
+            throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $booking->id . ')');
         }
 
         $existingBooking->setComment($booking->comment);
@@ -105,7 +105,7 @@ class BookingService
         $house = $this->entityManager->getRepository(SummerHouse::class)->find($booking->houseId);
 
         if (!$house) {
-            throw new EntityNotFoundException('house doesn\'t exist (id: '.$booking->houseId.')');
+            throw new EntityNotFoundException('house doesn\'t exist (id: ' . $booking->houseId . ')');
         }
 
         $existingBooking->setHouse($house);
@@ -113,7 +113,7 @@ class BookingService
         $errors = $validator->validate($existingBooking);
 
         if (count($errors) > 0) {
-            throw new InvalidArgumentException('validation failed: '.(string) $errors);
+            throw new InvalidArgumentException('validation failed: ' . (string) $errors);
         }
 
         $this->entityManager->persist($existingBooking);
@@ -126,12 +126,12 @@ class BookingService
         // there will be permitions check
 
         /**
-         * Booking|null $existingBooking.
+         * @var Booking|null $existingBooking
          */
         $booking = $this->bookingRepository->find($bookingId);
 
         if (!$booking) {
-            throw new EntityNotFoundException('booking doesn\'t exist (id: '.$bookingId.')');
+            throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $bookingId . ')');
         }
 
         $this->entityManager->remove($booking);

@@ -30,7 +30,7 @@ class BookingServiceTest extends KernelTestCase
             $this->assertNotEmpty($bookings);
             $this->assertInstanceOf(BookingDto::class, $bookings[0]);
         } catch (Exception $e) {
-            $this->fail('failed to get bookings: '.$e->getMessage());
+            $this->fail('failed to get bookings: ' . $e->getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ class BookingServiceTest extends KernelTestCase
 
             $bookingService->saveBooking($container->get('validator'), $bookingDto);
         } catch (Exception $e) {
-            $this->fail('failed to save booking: '.$e->getMessage());
+            $this->fail('failed to save booking: ' . $e->getMessage());
         }
 
         $newBookings = $bookingService->getBookings();

@@ -53,7 +53,7 @@ class SummerHouseService
         $existingHouse = $this->summerHouseRepository->findOneBy(['address' => $summerHouse->address]);
 
         if ($existingHouse) {
-            throw new InvalidArgumentException('a house with this address already exists: '.$summerHouse->address);
+            throw new InvalidArgumentException('a house with this address already exists: ' . $summerHouse->address);
         }
 
         $newSummerhouse = new SummerHouse(
@@ -68,7 +68,7 @@ class SummerHouseService
 
         $errors = $validator->validate($newSummerhouse);
         if (count($errors) > 0) {
-            throw new InvalidArgumentException('validation failed: '.(string) $errors);
+            throw new InvalidArgumentException('validation failed: ' . (string) $errors);
         }
 
         $this->entityManager->persist($newSummerhouse);
@@ -85,7 +85,7 @@ class SummerHouseService
         $existingHouse = $this->summerHouseRepository->find($summerHouse->id);
 
         if (!$existingHouse) {
-            throw new InvalidArgumentException('house not found (id: '.$summerHouse->id.')');
+            throw new InvalidArgumentException('house not found (id: ' . $summerHouse->id . ')');
         }
 
         $existingHouse->setAddress($summerHouse->address);
@@ -97,7 +97,7 @@ class SummerHouseService
 
         $errors = $validator->validate($existingHouse);
         if (count($errors) > 0) {
-            throw new InvalidArgumentException('validation failed: '.(string) $errors);
+            throw new InvalidArgumentException('validation failed: ' . (string) $errors);
         }
 
         $this->entityManager->flush();
@@ -113,7 +113,7 @@ class SummerHouseService
         $summerHouse = $this->summerHouseRepository->find($houseId);
 
         if (!$summerHouse) {
-            throw new InvalidArgumentException('house not found (id: '.$houseId.')');
+            throw new InvalidArgumentException('house not found (id: ' . $houseId . ')');
         }
 
         $this->entityManager->remove($summerHouse);

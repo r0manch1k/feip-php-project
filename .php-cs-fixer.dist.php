@@ -22,7 +22,8 @@ return (new PhpCsFixer\Config())
             'import_functions' => true,
             'import_constants' => true,
         ],
+        'concat_space' => ['spacing' => 'one'],
     ])
-    ->setCacheFile("var/cache/.php-cs-fixer.cache")
+    ->setCacheFile('var/cache/.php-cs-fixer.cache')
     ->setFinder($finder)
 ;

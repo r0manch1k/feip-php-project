@@ -23,6 +23,7 @@ class BookingDataFixtures extends Fixture
          * @var SummerHouse[] $summerHouses
          */
         $summerHouses = [];
+
         for ($i = 0; $i < 20; ++$i) {
             $summerHouse = new SummerHouse(
                 id: $i,
