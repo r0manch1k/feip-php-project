@@ -1,25 +1,54 @@
-<?xml version="1.0"?>
+<?xml version='1.0'?>
 <psalm
-    errorLevel="7"
-    resolveFromConfigFile="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    findUnusedBaselineEntry="true"
-    findUnusedCode="true"
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns='https://getpsalm.org/schema/config'
+    xsi:schemaLocation='https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd'
+    xmlns:xi='http://www.w3.org/2001/XInclude'
+    errorLevel='3'
+    resolveFromConfigFile='true'
+    cacheDirectory='var/cache/.psalm-cache'
+    ignoreInternalFunctionFalseReturn='false'
+    ignoreInternalFunctionNullReturn='false'
+    ensureArrayIntOffsetsExist='true'
+    ensureArrayStringOffsetsExist='true'
+    strictBinaryOperands='true'
+    restrictReturnTypes='true'
+    findUnusedPsalmSuppress='true'
+    phpVersion='8.4.4'
 >
     <projectFiles>
-        <directory name="src" />
+        <directory name='src' />
+        <directory name='tests' />
         <ignoreFiles>
-            <directory name="bin" />
-            <directory name="vendor" />
-            <directory name="var/cache" />
-            <file name="public/index.php" />
+            <directory name='bin' />
+            <directory name='vendor' />
+            <directory name='var/cache' />
+            <file name='public/index.php' />
+            <file name='config/preload.php' />
+            <file name='tests/bootstrap.php' />
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <UnusedClass errorLevel='suppress' />
+        <UnusedParam errorLevel='suppress' />
+        <PossiblyUnusedMethod errorLevel='suppress' />
+        <PossiblyUnusedProperty errorLevel='suppress' />
+        <PossiblyUndefinedIntArrayOffset>
+            <errorLevel type='suppress'>
+                <directory name='tests' />
+            </errorLevel>
+        </PossiblyUndefinedIntArrayOffset>
+        <ArgumentTypeCoercion>
+            <errorLevel type='suppress'>
+                <directory name='tests' />
+            </errorLevel>
+        </ArgumentTypeCoercion>
+    </issueHandlers>
+
     <plugins>
-        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin" />
-        <pluginClass class="Psalm\PhpUnitPlugin\Plugin" />
-        <pluginClass class="Orklah\PsalmInsaneComparison\Plugin" />
+        <pluginClass class='Psalm\SymfonyPsalmPlugin\Plugin' />
+        <pluginClass class='Psalm\PhpUnitPlugin\Plugin' />
+        <pluginClass class='Orklah\PsalmInsaneComparison\Plugin' />
     </plugins>
 </psalm>

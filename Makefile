@@ -105,7 +105,11 @@ composer-install:
 
 .PHONY: psalm
 psalm:
-	$(PHP) vendor/bin/psalm
+	$(PHP) ./vendor/bin/psalm
+
+.PHONY: psalm-clear-cache
+psalm-clear-cache:
+	$(PHP) ./vendor/bin/psalm --clear-cache
 
 # TESTS
 
@@ -120,3 +124,25 @@ test-services:
 .PHONY: test-controllers
 test-controllers:
 	$(PHP) ./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/Controller
+
+# PHPCS
+
+.PHONY: phpcs
+phpcs:
+	$(PHP) ./vendor/bin/phpcs
+
+.PHONY: phpcbf
+phpcbf:
+	$(PHP) ./vendor/bin/phpcbf
+
+.PHONY: phpcs-file
+phpcs-file:
+	$(PHP) ./vendor/bin/phpcs $(FILE)
+
+.PHONY: phpcbf-file
+phpcbf-file:
+	$(PHP) ./vendor/bin/phpcbf $(FILE)
+
+.PHONY: php-cs-fixer
+php-cs-fixer:
+	$(PHP) ./vendor/bin/php-cs-fixer --allow-risky=yes fix

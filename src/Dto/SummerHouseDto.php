@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Dto\HouseDto;
-
 readonly class SummerHouseDto extends HouseDto
 {
     public function __construct(
@@ -17,6 +15,5 @@ readonly class SummerHouseDto extends HouseDto
         public ?bool $hasShower,
         public ?bool $hasBathroom,
     ) {
-        // parent::__construct($id, $address, $price);
     }
 }

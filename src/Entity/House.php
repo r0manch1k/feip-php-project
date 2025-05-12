@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\HouseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HouseRepository::class)]
-#[ORM\InheritanceType("JOINED")]
+#[ORM\InheritanceType('JOINED')]
 #[ORM\Table(name: 'house')]
-#[ORM\DiscriminatorColumn(name: "type", type: "string")]
-#[ORM\DiscriminatorMap(["house" => House::class, "summer_house" => SummerHouse::class])]
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
+#[ORM\DiscriminatorMap(['house' => House::class, 'summer_house' => SummerHouse::class])]
 class House
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id;
 
     #[ORM\Column(length: 255, nullable: false)]
@@ -26,7 +28,7 @@ class House
     public function __construct(
         ?int $id,
         string $address,
-        int $price
+        int $price,
     ) {
         $this->id = $id;
         $this->address = $address;
