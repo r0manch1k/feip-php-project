@@ -18,8 +18,9 @@ class Booking
     #[ORM\Column(type: 'integer')]
     private ?int $id;
 
-    #[ORM\Column(length: 15, nullable: false)]
-    private string $phoneNumber;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private User $user;
 
     #[ORM\ManyToOne(targetEntity: SummerHouse::class, inversedBy: 'bookings')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE', name: 'house_id', referencedColumnName: 'id')]
@@ -36,14 +37,14 @@ class Booking
 
     public function __construct(
         ?int $id,
-        string $phoneNumber,
+        User $user,
         SummerHouse $house,
         DateTimeInterface $startDate,
         DateTimeInterface $endDate,
         ?string $comment = null,
     ) {
         $this->id = $id;
-        $this->phoneNumber = $phoneNumber;
+        $this->user = $user;
         $this->house = $house;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -60,14 +61,14 @@ class Booking
         return $this->id;
     }
 
-    public function getPhoneNumber(): string
+    public function getUser(): User
     {
-        return $this->phoneNumber;
+        return $this->user;
     }
 
-    public function setPhoneNumber(string $phoneNumber): static
+    public function setUser(User $user): static
     {
-        $this->phoneNumber = $phoneNumber;
+        $this->user = $user;
 
         return $this;
     }

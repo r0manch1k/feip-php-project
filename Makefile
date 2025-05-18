@@ -61,55 +61,49 @@ down:
 
 .PHONY: doctrine-create
 doctrine-create:
-	$(PHP) bin/console doctrine:database:create
+	$(PHP) bin/console --env=dev doctrine:database:create
 
 .PHONY: doctrine-diff
 doctrine-diff:
-	$(PHP) bin/console doctrine:migrations:diff
+	$(PHP) bin/console --env=dev doctrine:migrations:diff --formatted
 
 .PHONY: doctrine-migrate
 doctrine-migrate:
-	$(PHP) bin/console doctrine:migrations:migrate
-
-.PHONY: doctrine-fixtures
-doctrine-fixtures:
-	$(PHP) bin/console --env=test doctrine:database:create
+	$(PHP) bin/console --env=dev doctrine:migrations:migrate
 
 .PHONY: doctrine-schema
 doctrine-schema:
-	$(PHP) bin/console --env=test doctrine:schema:create
+	$(PHP) bin/console --env=dev doctrine:schema:create
 
 .PHONY: doctrine-drop
 doctrine-drop:
-	$(PHP) bin/console --env=test doctrine:database:drop --force
+	$(PHP) bin/console --env=dev doctrine:database:drop --force
+
+.PHONY: doctrine-fixtures
+doctrine-fixtures-load:
+	$(PHP) bin/console --env=test doctrine:fixtures:load
 
 .PHONY: doctrine-create-test
 doctrine-create-test:
-	$(PHP) bin/console doctrine:database:create --env=test
+	$(PHP) bin/console --env=test doctrine:database:create
+
+.PHONY: doctrine-diff-test
+doctrine-diff-test:
+	$(PHP) bin/console --env=test doctrine:migrations:diff --formatted
 
 .PHONY: doctrine-migrate-test
 doctrine-migrate-test:
-	$(PHP) bin/console doctrine:migrations:migrate -n --env=test
+	$(PHP) bin/console --env=test doctrine:migrations:migrate -n
 
 .PHONY: doctrine-drop-test
 doctrine-drop-test:
-	$(PHP) bin/console doctrine:database:drop --force --env=test
+	$(PHP) bin/console --env=test doctrine:database:drop --force
 
 # COMPOSER 
 
 .PHONY: composer-install
 composer-install:
 	$(PHP) composer install
-
-# PSALM
-
-.PHONY: psalm
-psalm:
-	$(PHP) ./vendor/bin/psalm
-
-.PHONY: psalm-clear-cache
-psalm-clear-cache:
-	$(PHP) ./vendor/bin/psalm --clear-cache
 
 # TESTS
 
@@ -124,6 +118,16 @@ test-services:
 .PHONY: test-controllers
 test-controllers:
 	$(PHP) ./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/Controller
+
+# PSALM
+
+.PHONY: psalm
+psalm:
+	$(PHP) ./vendor/bin/psalm
+
+.PHONY: psalm-clear-cache
+psalm-clear-cache:
+	$(PHP) ./vendor/bin/psalm --clear-cache
 
 # PHPCS
 
@@ -146,3 +150,13 @@ phpcbf-file:
 .PHONY: php-cs-fixer
 php-cs-fixer:
 	$(PHP) ./vendor/bin/php-cs-fixer --allow-risky=yes fix
+
+# AUTH
+
+.PHONY: generate-keypair
+generate-keypair:
+	$(PHP) bin/console lexik:jwt:generate-keypair --overwrite
+
+.PHONY: create-admin
+create-admin:
+	$(PHP) bin/console app:create:admin $(PHONE) $(PASSWORD)

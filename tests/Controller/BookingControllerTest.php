@@ -4,22 +4,68 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use Override;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BookingControllerTest extends WebTestCase
 {
+    private string $jwtToken = '';
+    private ?KernelBrowser $client = null;
+
+    #[Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->client = static::createClient();
+
+        /**
+         * @see \App\DataFixtures\UserFixtures
+         */
+        $payload = json_encode([
+            'phoneNumber' => '+79990000001',
+            'password' => 'poE@mTqPY9k4L9fC',
+        ]);
+
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $this->client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNotFalse($this->client->getResponse()->getContent());
+
+        $content = $this->client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $this->assertJson($content);
+
+        $responseData = json_decode($content, true);
+
+        $this->assertArrayHasKey('token', $responseData);
+
+        $this->assertNotEmpty($responseData['token'], 'token is empty.');
+
+        $this->jwtToken = $responseData['token'];
+    }
+
     public function testGetBookings(): void
     {
-        $client = static::createClient();
+        $this->assertNotNull($this->client, 'client is null.');
 
-        $client->request('GET', '/api/booking/list');
+        $this->client->request('GET', '/api/booking/list');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $content = $client->getResponse()->getContent();
+        $content = $this->client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -34,7 +80,7 @@ class BookingControllerTest extends WebTestCase
         $booking = $responseData[0];
 
         $this->assertArrayHasKey('id', $booking);
-        $this->assertArrayHasKey('phoneNumber', $booking);
+        $this->assertArrayHasKey('user', $booking);
         $this->assertArrayHasKey('houseId', $booking);
         $this->assertArrayHasKey('startDate', $booking);
         $this->assertArrayHasKey('endDate', $booking);
@@ -43,33 +89,35 @@ class BookingControllerTest extends WebTestCase
 
     public function testCreateBooking(): void
     {
-        $client = static::createClient();
-
         $payload = json_encode([
-            'phoneNumber' => '+37061234567',
             'houseId' => 11,
             'comment' => '',
             'startDate' => '2027-10-01 00:00:00',
             'endDate' => '2028-10-10 00:00:00',
         ]);
 
-        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $client->request(
+        $this->assertNotNull($this->client, 'client is null.');
+
+        $this->client->request(
             'POST',
             '/api/booking/create',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_Authorization' => 'Bearer ' . $this->jwtToken,
+            ],
             $payload
         );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);
 
-        $this->assertNotFalse($client->getResponse()->getContent());
+        $this->assertNotFalse($this->client->getResponse()->getContent());
 
-        $content = $client->getResponse()->getContent();
+        $content = $this->client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -80,33 +128,34 @@ class BookingControllerTest extends WebTestCase
 
     public function testChangeBooking(): void
     {
-        $client = static::createClient();
+        $this->assertNotNull($this->client, 'client is null.');
 
         $payload = json_encode([
-            'phoneNumber' => '+37061234567',
             'houseId' => 12,
             'startDate' => '2026-10-01 00:00:00',
             'endDate' => '2026-10-10 00:00:00',
             'comment' => 'Hurry up!',
         ]);
 
-        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $client->request(
+        $this->client->request(
             'PUT',
             '/api/booking/change/5',
             [],
             [],
-            [],
+            [
+                'HTTP_Authorization' => 'Bearer ' . $this->jwtToken,
+            ],
             $payload
         );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($client->getResponse()->getContent());
+        $this->assertNotFalse($this->client->getResponse()->getContent());
 
-        $content = $client->getResponse()->getContent();
+        $content = $this->client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 

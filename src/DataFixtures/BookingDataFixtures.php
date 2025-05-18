@@ -6,13 +6,15 @@ namespace App\DataFixtures;
 
 use App\Entity\Booking;
 use App\Entity\SummerHouse;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
 use Override;
 
-class BookingDataFixtures extends Fixture
+class BookingDataFixtures extends Fixture implements DependentFixtureInterface
 {
     #[Override]
     public function load(ObjectManager $manager): void
@@ -40,9 +42,14 @@ class BookingDataFixtures extends Fixture
         }
 
         for ($i = 0; $i < 20; ++$i) {
+            /**
+             * @var User $user
+             */
+            $user = $manager->getRepository(User::class)->findOneBy(['phoneNumber' => '+79990000001']);
+
             $booking = new Booking(
                 id: $i,
-                phoneNumber: $faker->e164PhoneNumber(),
+                user: $user,
                 house: $summerHouses[$i],
                 startDate: $faker->dateTimeBetween('-1 year', '+1 year'),
                 endDate: $faker->dateTimeBetween('+1 year', '+2 years'),
@@ -71,5 +78,13 @@ class BookingDataFixtures extends Fixture
         $address = "$buildingNumber $streetName, $city, $stateAbbr $postcode";
 
         return $address;
+    }
+
+    #[Override]
+    public function getDependencies(): array
+    {
+        return [
+            UserFixtures::class,
+        ];
     }
 }
