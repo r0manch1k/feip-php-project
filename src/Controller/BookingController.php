@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/booking', name: 'api_booking_')]
+#[Route('/api/booking', name: 'api_booking')]
 final class BookingController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -26,7 +26,7 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'falied to get bookings (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json($bookings, 200);
+        return $this->json(array_map(fn ($b) => $b->toArray(), $bookings), 200);
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
@@ -38,17 +38,23 @@ final class BookingController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['phoneNumber'], $data['houseId'], $data['startDate'], $data['endDate'])) {
+        if (!isset($data['houseId'], $data['startDate'], $data['endDate'])) {
             return $this->json(['error' => 'missing required fields'], 400);
+        }
+
+        $user = $this->getUser();
+
+        if (!$user || !$user instanceof \App\Entity\User) {
+            return $this->json(['error' => 'user not authenticated'], 401);
         }
 
         $booking = new BookingDto(
             id: null,
-            phoneNumber: $data['phoneNumber'],
+            user: $user,
             houseId: $data['houseId'],
             startDate: new DateTime($data['startDate']),
             endDate: new DateTime($data['endDate']),
-            comment: $data['comment'],
+            comment: $data['comment'] ?? null,
         );
 
         try {
@@ -69,17 +75,23 @@ final class BookingController extends AbstractController
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['phoneNumber'], $data['houseId'], $data['startDate'], $data['endDate'])) {
+        if (!isset($data['houseId'], $data['startDate'], $data['endDate'])) {
             return $this->json(['error' => 'missing required fields'], 400);
+        }
+
+        $user = $this->getUser();
+
+        if (!$user || !$user instanceof \App\Entity\User) {
+            return $this->json(['error' => 'user not authenticated'], 401);
         }
 
         $booking = new BookingDto(
             id: $bookingId,
-            phoneNumber: $data['phoneNumber'],
+            user: $user,
             houseId: $data['houseId'],
             startDate: new DateTime($data['startDate']),
             endDate: new DateTime($data['endDate']),
-            comment: $data['comment'],
+            comment: $data['comment'] ?? null,
         );
 
         try {
@@ -94,8 +106,14 @@ final class BookingController extends AbstractController
     #[Route('/delete/{bookingId}', name: 'delete', methods: ['DELETE'])]
     public function delete(Request $request, int $bookingId, BookingService $bookingService): JsonResponse
     {
+        $user = $this->getUser();
+
+        if (!$user || !$user instanceof \App\Entity\User) {
+            return $this->json(['error' => 'user not authenticated'], 401);
+        }
+
         try {
-            $bookingService->deleteBooking($bookingId);
+            $bookingService->deleteBooking($bookingId, $user);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to delete booking (error: ' . $e->getMessage() . ')'], 500);
         }

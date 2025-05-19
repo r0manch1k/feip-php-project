@@ -19,7 +19,7 @@ class House
     #[ORM\Column(type: 'integer')]
     private ?int $id;
 
-    #[ORM\Column(length: 255, nullable: false)]
+    #[ORM\Column(length: 255, nullable: false, unique: true)]
     private string $address;
 
     #[ORM\Column(nullable: false)]

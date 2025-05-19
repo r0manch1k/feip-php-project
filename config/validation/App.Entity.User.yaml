@@ -1,0 +1,22 @@
+App\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields: phoneNumber
+              message: 'there is already an account with this phone number.'
+    properties:
+        phoneNumber:
+            - Type:
+                  type: string
+            - NotBlank: ~
+            - Regex:
+                  # TODO: handle international phone numbers
+                  pattern: '/^\+7\d{10}$/'
+                  message: 'Phone number must start with +7 and contain exactly 10 digits after that.'
+        password:
+            - NotBlank: ~
+            - Length:
+                  min: 8
+                  max: 255
+            - Regex:
+                  pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+                  message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'

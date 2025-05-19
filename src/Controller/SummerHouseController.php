@@ -11,9 +11,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/summerhouse', name: 'api_summerhouse_')]
+#[Route('/api/summerhouse', name: 'api_summerhouse')]
 final class SummerHouseController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -29,12 +30,12 @@ final class SummerHouseController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function create(
         Request $request,
         SummerHouseService $summerHouseService,
         ValidatorInterface $validator,
     ): JsonResponse {
-
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['address'], $data['price'])) {
@@ -57,10 +58,11 @@ final class SummerHouseController extends AbstractController
             return $this->json(['error' => 'failed to save summer house (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json(['message' => 'booked successfully'], 201);
+        return $this->json(['message' => 'created successfully'], 201);
     }
 
     #[Route('/change/{houseId}', name: 'change', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function change(
         Request $request,
         int $houseId,
@@ -93,6 +95,7 @@ final class SummerHouseController extends AbstractController
     }
 
     #[Route('/delete/{houseId}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
         int $houseId,

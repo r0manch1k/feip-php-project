@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Dto\BookingDto;
+use App\Entity\User;
 use App\Service\BookingService;
 use DateTime;
 use Exception;
@@ -48,12 +49,19 @@ class BookingServiceTest extends KernelTestCase
 
         $oldBookings = $bookingService->getBookings();
 
+        $userRepository = $container->get('doctrine')->getRepository(User::class);
+        $user = $userRepository->findOneBy(['phoneNumber' => '+79990000001']);
+
+        if (null === $user) {
+            $this->fail('user not found');
+        }
+
         try {
             $bookingDto = new BookingDto(
                 id: null,
-                phoneNumber: '+12223334455',
+                user: $user,
                 houseId: 10,
-                comment: 'a happy house',
+                comment: 'A happy house',
                 startDate: new DateTime('2027-10-01'),
                 endDate: new DateTime('2028-10-10')
             );
@@ -80,11 +88,18 @@ class BookingServiceTest extends KernelTestCase
 
         $bookingService = $container->get(BookingService::class);
 
+        $userRepository = $container->get('doctrine')->getRepository(User::class);
+        $user = $userRepository->findOneBy(['phoneNumber' => '+79990000001']);
+
+        if (null === $user) {
+            $this->fail('user not found');
+        }
+
         $bookingDto = new BookingDto(
             id: null,
-            phoneNumber: '+12223334455',
+            user: $user,
             houseId: 1,
-            comment: '(^_^)',
+            comment: 'A happy house',
             startDate: new DateTime('2020-10-01'),
             endDate: new DateTime('2030-10-10')
         );

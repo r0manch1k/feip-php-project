@@ -1,12 +1,9 @@
 App\Entity\Booking:
     properties:
-        phoneNumber:
-            - Type:
-                  type: string
+        user:
             - NotBlank: ~
-            - Regex:
-                  pattern: '/^\+?[0-9]{10,15}$/'
-                  message: 'Phone number must be between 10 and 15 digits long and can start with a +.'
+            - Type:
+                  type: App\Entity\User
         house:
             - NotBlank: ~
             - Type:
