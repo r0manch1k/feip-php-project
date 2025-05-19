@@ -59,6 +59,10 @@ down:
 
 # DOCTRINE
 
+.PHONY: migrations-clean
+migrations-clean:
+	rm -f migrations/*.php
+
 .PHONY: doctrine-create
 doctrine-create:
 	$(PHP) bin/console --env=dev doctrine:database:create

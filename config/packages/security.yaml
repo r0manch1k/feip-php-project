@@ -40,7 +40,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/(register|login|token/refresh), roles: PUBLIC_ACCESS }
+        - {
+              path: ^/api/(register|login|logout|token/refresh),
+              roles: PUBLIC_ACCESS,
+          }
         - { path: ^/api/profile, roles: ROLE_USER }
         - { path: ^/api/booking/list, roles: PUBLIC_ACCESS }
         - { path: ^/api/booking/(create|change|delete), roles: ROLE_USER }

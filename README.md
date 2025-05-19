@@ -12,67 +12,60 @@ cp .env.test .env.test.local
 
 Build Docker images:
 
-```
+```sh
 make build
 ```
 
 Install dependencies:
 
-```
+```sh
 make composer-install
-```
-
-Generate JWT keys:
-
-```
-make generate-keypair
-```
-
-Make migrations:
-
-```
-
-make doctrine-diff
-make doctrine-migrate
-
 ```
 
 Run the application:
 
-```
-
+```sh
 make up-logs
-
 ```
 
-_TESTS_
+Generate JWT keys:
+
+```sh
+make generate-keypair
+```
+
+Setup database:
+
+```sh
+# make migrations-clean
+# make doctrine-drop
+make doctrine-create
+make doctrine-diff
+make doctrine-migrate
+```
+
+### Tests
 
 Run tests:
 
-```
-
+```sh
 make test-all
-
 ```
 
 or...
 
-```
-
+```sh
 make test-services
 make test-controllers
-
 ```
 
-_FORMATTING AND LINTING_
+### Formatting and linting
 
-```
-
+```sh
 make phpcs
 make phpcbf
 make php-cs-fixer
 make psalm
-
 ```
 
 ### Api Documentation
@@ -102,6 +95,16 @@ Getting token:
   ```
 
 - `POST /api/token/refresh` - Returns access and refresh tokens
+
+  Request body:
+
+  ```json
+  {
+    "refreshToken": "token"
+  }
+  ```
+
+- `POST /api/logout` - Deletes refresh token
 
   Request body:
 
@@ -161,7 +164,7 @@ Booking API (_Bearer Token_ must me provided):
 
 - `DELETE /api/booking/delete/{bookingId}` - Deletes a booking by its ID - _ROLE_USER_
 
-_OPTIONAL_
+### Optional
 
 Create `.vscode/launch.json` file to configure Xdebug:
 

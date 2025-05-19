@@ -76,11 +76,33 @@ final class AuthController extends AbstractController
         }
 
         return $this->json([
-            'user' => [
-                'id' => $user->getId(),
-                'phoneNumber' => $user->getPhoneNumber(),
-                'roles' => $user->getRoles(),
-            ],
+            'id' => $user->getId(),
+            'phoneNumber' => $user->getPhoneNumber(),
+            'roles' => $user->getRoles(),
         ]);
+    }
+
+    #[Route('/api/logout', name: 'api_logout')]
+    public function logout(
+        Request $request,
+        RefreshTokenManagerInterface $refreshTokenManager,
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['refreshToken'])) {
+            return $this->json(['error' => 'missing required fields'], 400);
+        }
+
+        try {
+            $refreshToken = $refreshTokenManager->get($data['refreshToken']);
+            if (!$refreshToken) {
+                return $this->json(['error' => 'invalid refresh token'], 400);
+            }
+            $refreshTokenManager->delete($refreshToken);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'failed to delete token (error: ' . $e->getMessage() . ')'], 500);
+        }
+
+        return $this->json(['message' => 'success'], 200);
     }
 }

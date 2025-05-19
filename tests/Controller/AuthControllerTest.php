@@ -36,6 +36,7 @@ class AuthControllerTest extends WebTestCase
         ], $payload);
 
         $this->assertResponseIsSuccessful();
+
         $this->assertResponseStatusCodeSame(201);
 
         $this->assertNotFalse($this->client->getResponse()->getContent());
@@ -50,7 +51,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('token', $responseData);
 
-        $this->assertNotEmpty($responseData['token'], 'Token is empty.');
+        $this->assertNotEmpty($responseData['token'], 'token is empty.');
     }
 
     public function testLogin(): void
@@ -69,6 +70,7 @@ class AuthControllerTest extends WebTestCase
         ], $payload);
 
         $this->assertResponseIsSuccessful();
+
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($this->client->getResponse()->getContent());
@@ -83,6 +85,84 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('token', $responseData);
 
-        $this->assertNotEmpty($responseData['token'], 'Token is empty.');
+        $this->assertArrayHasKey('refreshToken', $responseData);
+
+        $this->assertNotEmpty($responseData['token'], 'token is empty.');
+    }
+
+    public function testLogout(): void
+    {
+        $this->assertNotNull($this->client, 'client is null.');
+
+        $payload = json_encode([
+            'phoneNumber' => '+76665554433',
+            'password' => 'poE@mTqPY9k4L9fC',
+        ]);
+
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $this->client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNotFalse($this->client->getResponse()->getContent());
+
+        $content = $this->client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $this->assertJson($content);
+
+        $responseData = json_decode($content, true);
+
+        $payload = json_encode([
+            'refreshToken' => $responseData['refreshToken'],
+        ]);
+
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $this->client->request('POST', '/api/token/refresh', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNotFalse($this->client->getResponse()->getContent());
+
+        $content = $this->client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $this->assertJson($content);
+
+        $responseData = json_decode($content, true);
+
+        $payload = json_encode([
+            'refreshToken' => $responseData['refreshToken'],
+        ]);
+
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $this->client->request('POST', '/api/logout', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNotFalse($this->client->getResponse()->getContent());
+
+        $this->client->request('POST', '/api/token/refresh', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseStatusCodeSame(401);
     }
 }
