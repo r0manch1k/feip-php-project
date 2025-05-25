@@ -73,6 +73,7 @@ final class BookingController extends AbstractController
         BookingService $bookingService,
         ValidatorInterface $validator,
     ): JsonResponse {
+
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['houseId'], $data['startDate'], $data['endDate'])) {

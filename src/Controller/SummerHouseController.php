@@ -46,10 +46,10 @@ final class SummerHouseController extends AbstractController
             id: null,
             address: $data['address'] ? $data['address'] : 'None',
             price: $data['price'] ? $data['price'] : 0,
-            bedrooms: $data['bedrooms'],
-            distanceFromSea: $data['distanceFromSea'],
-            hasShower: $data['hasShower'],
-            hasBathroom: $data['hasBathroom']
+            bedrooms: $data['bedrooms'] ?? null,
+            distanceFromSea: $data['distanceFromSea'] ?? null,
+            hasShower: $data['hasShower'] ?? null,
+            hasBathroom: $data['hasBathroom'] ?? null
         );
 
         try {

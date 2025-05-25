@@ -17,4 +17,16 @@ class SummerHouseRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, SummerHouse::class);
     }
+
+    /**
+     * @return SummerHouse[]
+     */
+    public function getMostExpensiveHouses(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('h')
+            ->orderBy('h.price', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

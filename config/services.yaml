@@ -20,5 +20,19 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Service\TelegramBotService:
+        arguments:
+            $token: '%env(TELEGRAM_BOT_TOKEN)%'
+
+    App\Command\SetTelegramWebhookCommand:
+        arguments:
+            $token: '%env(TELEGRAM_BOT_TOKEN)%'
+            $url: '%env(TELEGRAM_WEBHOOK_URL)%'
+        tags: ['console.command']
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

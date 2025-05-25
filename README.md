@@ -68,6 +68,16 @@ make php-cs-fixer
 make psalm
 ```
 
+### Telegram Bot
+
+Make sure there are _TELEGRAM_BOT_TOKEN_ and _TELEGRAM_WEBHOOK_URL_ in `.env` file
+
+Set webhook by running this command:
+
+```sh
+make set-webhook
+```
+
 ### Api Documentation
 
 Getting token:
@@ -117,7 +127,7 @@ Getting token:
 You can create admin user by running this command:
 
 ```
-make create-admin PHONE=+72223334455 PASSWORD=poE@mTqPY9k4L9fC
+make create-admin PHONE=+76665554433 PASSWORD=poE@mTqPY9k4L9fC
 ```
 
 Booking API (_Bearer Token_ must me provided):
