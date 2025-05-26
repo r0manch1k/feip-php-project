@@ -17,11 +17,30 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/booking', name: 'api_booking')]
 final class BookingController extends AbstractController
 {
-    #[Route('/list', name: 'list', methods: ['GET'])]
-    public function list(Request $request, BookingService $bookingService): JsonResponse
+    private BookingService $bookingService;
+    private ValidatorInterface $validator;
+
+    public function __construct(BookingService $bookingService, ValidatorInterface $validator)
     {
+        $this->bookingService = $bookingService;
+        $this->validator = $validator;
+    }
+
+    #[Route('/list', name: 'list', methods: ['GET'])]
+    public function list(Request $request): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user || !$user instanceof \App\Entity\User) {
+            return $this->json(['error' => 'user not authenticated'], 401);
+        }
+
         try {
-            $bookings = $bookingService->getBookings();
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $bookings = $this->bookingService->getBookings();
+            } else {
+                $bookings = $this->bookingService->getBookings($user);
+            }
         } catch (Exception $e) {
             return $this->json(['error' => 'falied to get bookings (error: ' . $e->getMessage() . ')'], 500);
         }
@@ -30,11 +49,8 @@ final class BookingController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(
-        Request $request,
-        BookingService $bookingService,
-        ValidatorInterface $validator,
-    ): JsonResponse {
+    public function create(Request $request): JsonResponse
+    {
 
         $data = json_decode($request->getContent(), true);
 
@@ -58,7 +74,7 @@ final class BookingController extends AbstractController
         );
 
         try {
-            $bookingService->saveBooking($validator, $booking);
+            $this->bookingService->saveBooking($this->validator, $booking);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to save booking (error: ' . $e->getMessage() . ')'], 500);
         }
@@ -67,13 +83,8 @@ final class BookingController extends AbstractController
     }
 
     #[Route('/change/{bookingId}', name: 'change', methods: ['PUT'])]
-    public function change(
-        Request $request,
-        int $bookingId,
-        BookingService $bookingService,
-        ValidatorInterface $validator,
-    ): JsonResponse {
-
+    public function change(Request $request, int $bookingId): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['houseId'], $data['startDate'], $data['endDate'])) {
@@ -96,7 +107,7 @@ final class BookingController extends AbstractController
         );
 
         try {
-            $bookingService->changeBooking($validator, $booking);
+            $this->bookingService->changeBooking($this->validator, $booking);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to change booking (error: ' . $e->getMessage() . ')'], 500);
         }
@@ -105,7 +116,7 @@ final class BookingController extends AbstractController
     }
 
     #[Route('/delete/{bookingId}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Request $request, int $bookingId, BookingService $bookingService): JsonResponse
+    public function delete(Request $request, int $bookingId): JsonResponse
     {
         $user = $this->getUser();
 
@@ -114,7 +125,7 @@ final class BookingController extends AbstractController
         }
 
         try {
-            $bookingService->deleteBooking($bookingId, $user);
+            $this->bookingService->deleteBooking($bookingId, $user);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to delete booking (error: ' . $e->getMessage() . ')'], 500);
         }

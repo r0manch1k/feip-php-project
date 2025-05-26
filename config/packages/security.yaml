@@ -45,8 +45,7 @@ security:
               roles: PUBLIC_ACCESS,
           }
         - { path: ^/api/profile, roles: ROLE_USER }
-        - { path: ^/api/booking/list, roles: PUBLIC_ACCESS }
-        - { path: ^/api/booking/(create|change|delete), roles: ROLE_USER }
+        - { path: ^/api/booking/(list|create|change|delete), roles: ROLE_USER }
         - { path: ^/api/summerhouse/list, roles: PUBLIC_ACCESS }
         - { path: ^/api/summerhouse/(create|change|delete), roles: ROLE_ADMIN }
         # - { path: ^/admin, roles: ROLE_ADMIN }

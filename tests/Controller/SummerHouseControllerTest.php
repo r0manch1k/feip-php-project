@@ -4,22 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
-use Override;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SummerHouseControllerTest extends WebTestCase
 {
-    private string $jwtToken = '';
-    private ?KernelBrowser $client = null;
-
-    #[Override]
-    protected function setUp(): void
+    private function loginDefaultUser(KernelBrowser $client): string
     {
-        parent::setUp();
-
-        $this->client = static::createClient();
-
         /**
          * @see \App\DataFixtures\UserFixtures
          */
@@ -30,16 +21,16 @@ class SummerHouseControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/login', [], [], [
+        $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -51,23 +42,28 @@ class SummerHouseControllerTest extends WebTestCase
 
         $this->assertNotEmpty($responseData['token'], 'token is empty.');
 
-        $this->jwtToken = $responseData['token'];
+        /**
+         * @var string $jwtToken
+         */
+        $jwtToken = $responseData['token'];
+
+        return $jwtToken;
     }
 
     public function testGetSummerHouses(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
-        $this->client->request('GET', '/api/summerhouse/list');
+        $client->request('GET', '/api/summerhouse/list');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -92,7 +88,7 @@ class SummerHouseControllerTest extends WebTestCase
 
     public function testCreateSummerHouse(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
         $payload = json_encode([
             'address' => '123 Main St, Springfield, AI 62704',
@@ -105,14 +101,16 @@ class SummerHouseControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request(
+        $jwtToken = $this->loginDefaultUser($client);
+
+        $client->request(
             'POST',
             '/api/summerhouse/create',
             [],
             [],
             [
                 'CONTENT_TYPE' => 'application/json',
-                'HTTP_Authorization' => 'Bearer ' . $this->jwtToken,
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
             ],
             $payload
         );
@@ -120,9 +118,9 @@ class SummerHouseControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 

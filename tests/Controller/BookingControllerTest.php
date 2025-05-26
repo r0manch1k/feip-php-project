@@ -4,22 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use Override;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BookingControllerTest extends WebTestCase
 {
-    private string $jwtToken = '';
-    private ?KernelBrowser $client = null;
-
-    #[Override]
-    protected function setUp(): void
+    private function loginDefaultUser(KernelBrowser $client): string
     {
-        parent::setUp();
-
-        $this->client = static::createClient();
-
         /**
          * @see \App\DataFixtures\UserFixtures
          */
@@ -30,16 +21,16 @@ class BookingControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/login', [], [], [
+        $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -51,21 +42,36 @@ class BookingControllerTest extends WebTestCase
 
         $this->assertNotEmpty($responseData['token'], 'token is empty.');
 
-        $this->jwtToken = $responseData['token'];
+        /**
+         * @var string $jwtToken
+         */
+        $jwtToken = $responseData['token'];
+
+        return $jwtToken;
     }
 
     public function testGetBookings(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
-        $this->client->request('GET', '/api/booking/list');
+        $jwtToken = $this->loginDefaultUser($client);
+
+        $client->request(
+            'GET',
+            '/api/booking/list',
+            [],
+            [],
+            [
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
+            ]
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -89,6 +95,8 @@ class BookingControllerTest extends WebTestCase
 
     public function testCreateBooking(): void
     {
+        $client = static::createClient();
+
         $payload = json_encode([
             'houseId' => 11,
             'comment' => '',
@@ -98,16 +106,16 @@ class BookingControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->assertNotNull($this->client, 'client is null.');
+        $jwtToken = $this->loginDefaultUser($client);
 
-        $this->client->request(
+        $client->request(
             'POST',
             '/api/booking/create',
             [],
             [],
             [
                 'CONTENT_TYPE' => 'application/json',
-                'HTTP_Authorization' => 'Bearer ' . $this->jwtToken,
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
             ],
             $payload
         );
@@ -115,9 +123,9 @@ class BookingControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -128,7 +136,7 @@ class BookingControllerTest extends WebTestCase
 
     public function testChangeBooking(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
         $payload = json_encode([
             'houseId' => 12,
@@ -139,13 +147,15 @@ class BookingControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request(
+        $jwtToken = $this->loginDefaultUser($client);
+
+        $client->request(
             'PUT',
             '/api/booking/change/5',
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer ' . $this->jwtToken,
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
             ],
             $payload
         );
@@ -153,9 +163,9 @@ class BookingControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 

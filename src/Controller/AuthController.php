@@ -20,14 +20,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AuthController extends AbstractController
 {
+    private RefreshTokenManagerInterface $refreshTokenManager;
+    private JWTTokenManagerInterface $JWTManager;
+    private AuthService $authService;
+    private ValidatorInterface $validator;
+
+    public function __construct(RefreshTokenManagerInterface $refreshTokenManager, JWTTokenManagerInterface $JWTManager, AuthService $authService, ValidatorInterface $validator)
+    {
+        $this->refreshTokenManager = $refreshTokenManager;
+        $this->JWTManager = $JWTManager;
+        $this->authService = $authService;
+        $this->validator = $validator;
+    }
+
     #[Route('/api/register', name: 'api_register')]
-    public function register(
-        Request $request,
-        AuthService $authService,
-        ValidatorInterface $validator,
-        JWTTokenManagerInterface $JWTManager,
-        RefreshTokenManagerInterface $refreshTokenManager,
-    ): JsonResponse {
+    public function register(Request $request): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['phoneNumber'], $data['password'])) {
@@ -42,7 +50,7 @@ final class AuthController extends AbstractController
         );
 
         try {
-            $user = $authService->saveUser($validator, $user);
+            $user = $this->authService->saveUser($this->validator, $user);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to save user (error: ' . $e->getMessage() . ')'], 500);
         }
@@ -52,10 +60,10 @@ final class AuthController extends AbstractController
             $refreshToken->setRefreshToken(bin2hex(random_bytes(64)));
             $refreshToken->setUsername($user->getUserIdentifier());
             $refreshToken->setValid((new DateTimeImmutable())->modify('+1 month'));
-            $refreshTokenManager->save($refreshToken);
+            $this->refreshTokenManager->save($refreshToken);
 
             return $this->json([
-                'token' => $JWTManager->create($user),
+                'token' => $this->JWTManager->create($user),
                 'refreshToken' => $refreshToken->getRefreshToken(),
             ], 201);
         } catch (Exception $e) {
@@ -83,10 +91,8 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/api/logout', name: 'api_logout')]
-    public function logout(
-        Request $request,
-        RefreshTokenManagerInterface $refreshTokenManager,
-    ): JsonResponse {
+    public function logout(Request $request): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['refreshToken'])) {
@@ -94,11 +100,11 @@ final class AuthController extends AbstractController
         }
 
         try {
-            $refreshToken = $refreshTokenManager->get($data['refreshToken']);
+            $refreshToken = $this->refreshTokenManager->get($data['refreshToken']);
             if (!$refreshToken) {
                 return $this->json(['error' => 'invalid refresh token'], 400);
             }
-            $refreshTokenManager->delete($refreshToken);
+            $this->refreshTokenManager->delete($refreshToken);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to delete token (error: ' . $e->getMessage() . ')'], 500);
         }
