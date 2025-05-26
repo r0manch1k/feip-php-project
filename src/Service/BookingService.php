@@ -26,12 +26,16 @@ class BookingService
     /**
      * @return BookingDto[]
      */
-    public function getBookings(): array
+    public function getBookings(?User $user = null): array
     {
-        /**
+        /*
          * @var Booking[] $bookings
          */
-        $bookings = $this->bookingRepository->findAll();
+        if ($user) {
+            $bookings = $this->bookingRepository->findBy(['user' => $user]);
+        } else {
+            $bookings = $this->bookingRepository->findAll();
+        }
 
         $bookings = array_map(
             fn (Booking $booking) => new BookingDto(

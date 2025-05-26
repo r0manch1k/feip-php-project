@@ -4,25 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use Override;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AuthControllerTest extends WebTestCase
 {
-    private ?KernelBrowser $client = null;
-
-    #[Override]
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->client = static::createClient();
-    }
-
     public function testRegister(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
         $payload = json_encode([
             'phoneNumber' => '+76665554433',
@@ -31,7 +19,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/register', [], [], [
+        $client->request('POST', '/api/register', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
@@ -39,9 +27,9 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(201);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -56,7 +44,7 @@ class AuthControllerTest extends WebTestCase
 
     public function testLogin(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
         $payload = json_encode([
             'phoneNumber' => '+76665554433',
@@ -65,7 +53,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/login', [], [], [
+        $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
@@ -73,9 +61,9 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -92,7 +80,7 @@ class AuthControllerTest extends WebTestCase
 
     public function testLogout(): void
     {
-        $this->assertNotNull($this->client, 'client is null.');
+        $client = static::createClient();
 
         $payload = json_encode([
             'phoneNumber' => '+76665554433',
@@ -101,7 +89,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/login', [], [], [
+        $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
@@ -109,9 +97,9 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -125,7 +113,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/token/refresh', [], [], [
+        $client->request('POST', '/api/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
@@ -133,9 +121,9 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $content = $this->client->getResponse()->getContent();
+        $content = $client->getResponse()->getContent();
 
         $this->assertNotFalse($content);
 
@@ -149,7 +137,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertNotFalse($payload, 'failed to encode json payload.');
 
-        $this->client->request('POST', '/api/logout', [], [], [
+        $client->request('POST', '/api/logout', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
@@ -157,9 +145,9 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertNotFalse($client->getResponse()->getContent());
 
-        $this->client->request('POST', '/api/token/refresh', [], [], [
+        $client->request('POST', '/api/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
