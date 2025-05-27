@@ -16,16 +16,16 @@ Build Docker images:
 make build
 ```
 
-Install dependencies:
-
-```sh
-make composer-install
-```
-
 Run the application:
 
 ```sh
 make up-logs
+```
+
+Install dependencies:
+
+```sh
+make composer-install
 ```
 
 Generate JWT keys:
@@ -155,7 +155,7 @@ Booking API (_Bearer Token_ must me provided):
 
 - `DELETE /api/summerhouse/delete/{houseId}` - Deletes a summer house by its ID - _ROLE_ADMIN_
 
-- `GET /api/booking/list` - Retrieves a list of all bookings - _ROLE_USER_
+- `GET /api/booking/list` - Retrieves a list of user's bookings - _ROLE_USER_ (all if _ROLE_ADMIN_)
 
 - `POST /api/booking/create` - Creates a new booking - _ROLE_USER_
 
