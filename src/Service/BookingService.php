@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Dto\BookingDto;
 use App\Entity\Booking;
 use App\Entity\SummerHouse;
+use App\Entity\User;
 use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -25,17 +26,21 @@ class BookingService
     /**
      * @return BookingDto[]
      */
-    public function getBookings(): array
+    public function getBookings(?User $user = null): array
     {
-        /**
+        /*
          * @var Booking[] $bookings
          */
-        $bookings = $this->bookingRepository->findAll();
+        if ($user) {
+            $bookings = $this->bookingRepository->findBy(['user' => $user]);
+        } else {
+            $bookings = $this->bookingRepository->findAll();
+        }
 
         $bookings = array_map(
             fn (Booking $booking) => new BookingDto(
                 id: $booking->getId(),
-                phoneNumber: $booking->getPhoneNumber(),
+                user: $booking->getUser(),
                 houseId: $booking->getHouse()->getId() ?? throw new LogicException('house cannot be null'),
                 comment: $booking->getComment(),
                 startDate: $booking->getStartDate(),
@@ -57,7 +62,7 @@ class BookingService
 
         $newBooking = new Booking(
             id: null,
-            phoneNumber: $booking->phoneNumber,
+            user: $booking->user,
             house: $house,
             startDate: $booking->startDate,
             endDate: $booking->endDate,
@@ -97,8 +102,12 @@ class BookingService
             throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $booking->id . ')');
         }
 
+        if ($existingBooking->getUser() !== $booking->user) {
+            throw new InvalidArgumentException('access denied');
+        }
+
         $existingBooking->setComment($booking->comment);
-        $existingBooking->setPhoneNumber($booking->phoneNumber);
+        $existingBooking->setUser($booking->user);
         $existingBooking->setStartDate($booking->startDate);
         $existingBooking->setEndDate($booking->endDate);
 
@@ -121,17 +130,16 @@ class BookingService
         $this->entityManager->flush();
     }
 
-    public function deleteBooking(int $bookingId): void
+    public function deleteBooking(int $bookingId, User $user): void
     {
-        // there will be permitions check
-
-        /**
-         * @var Booking|null $existingBooking
-         */
         $booking = $this->bookingRepository->find($bookingId);
 
         if (!$booking) {
             throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $bookingId . ')');
+        }
+
+        if ($user !== $booking->getUser()) {
+            throw new InvalidArgumentException('access denied');
         }
 
         $this->entityManager->remove($booking);

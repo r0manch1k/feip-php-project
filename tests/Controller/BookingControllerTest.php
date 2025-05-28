@@ -4,15 +4,67 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BookingControllerTest extends WebTestCase
 {
+    private function loginDefaultUser(KernelBrowser $client): string
+    {
+        /**
+         * @see \App\DataFixtures\UserFixtures
+         */
+        $payload = json_encode([
+            'phoneNumber' => '+79990000001',
+            'password' => 'poE@mTqPY9k4L9fC',
+        ]);
+
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNotFalse($client->getResponse()->getContent());
+
+        $content = $client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $this->assertJson($content);
+
+        $responseData = json_decode($content, true);
+
+        $this->assertArrayHasKey('token', $responseData);
+
+        $this->assertNotEmpty($responseData['token'], 'token is empty.');
+
+        /**
+         * @var string $jwtToken
+         */
+        $jwtToken = $responseData['token'];
+
+        return $jwtToken;
+    }
+
     public function testGetBookings(): void
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/booking/list');
+        $jwtToken = $this->loginDefaultUser($client);
+
+        $client->request(
+            'GET',
+            '/api/booking/list',
+            [],
+            [],
+            [
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
+            ]
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -34,7 +86,7 @@ class BookingControllerTest extends WebTestCase
         $booking = $responseData[0];
 
         $this->assertArrayHasKey('id', $booking);
-        $this->assertArrayHasKey('phoneNumber', $booking);
+        $this->assertArrayHasKey('user', $booking);
         $this->assertArrayHasKey('houseId', $booking);
         $this->assertArrayHasKey('startDate', $booking);
         $this->assertArrayHasKey('endDate', $booking);
@@ -46,21 +98,25 @@ class BookingControllerTest extends WebTestCase
         $client = static::createClient();
 
         $payload = json_encode([
-            'phoneNumber' => '+37061234567',
             'houseId' => 11,
             'comment' => '',
             'startDate' => '2027-10-01 00:00:00',
             'endDate' => '2028-10-10 00:00:00',
         ]);
 
-        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $jwtToken = $this->loginDefaultUser($client);
 
         $client->request(
             'POST',
             '/api/booking/create',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
+            ],
             $payload
         );
 
@@ -83,21 +139,24 @@ class BookingControllerTest extends WebTestCase
         $client = static::createClient();
 
         $payload = json_encode([
-            'phoneNumber' => '+37061234567',
             'houseId' => 12,
             'startDate' => '2026-10-01 00:00:00',
             'endDate' => '2026-10-10 00:00:00',
             'comment' => 'Hurry up!',
         ]);
 
-        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $jwtToken = $this->loginDefaultUser($client);
 
         $client->request(
             'PUT',
             '/api/booking/change/5',
             [],
             [],
-            [],
+            [
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
+            ],
             $payload
         );
 

@@ -4,10 +4,52 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SummerHouseControllerTest extends WebTestCase
 {
+    private function loginDefaultUser(KernelBrowser $client): string
+    {
+        /**
+         * @see \App\DataFixtures\UserFixtures
+         */
+        $payload = json_encode([
+            'phoneNumber' => '+79990000000',
+            'password' => 'poE@mTqPY9k4L9fC',
+        ]);
+
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $payload);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNotFalse($client->getResponse()->getContent());
+
+        $content = $client->getResponse()->getContent();
+
+        $this->assertNotFalse($content);
+
+        $this->assertJson($content);
+
+        $responseData = json_decode($content, true);
+
+        $this->assertArrayHasKey('token', $responseData);
+
+        $this->assertNotEmpty($responseData['token'], 'token is empty.');
+
+        /**
+         * @var string $jwtToken
+         */
+        $jwtToken = $responseData['token'];
+
+        return $jwtToken;
+    }
+
     public function testGetSummerHouses(): void
     {
         $client = static::createClient();
@@ -57,14 +99,19 @@ class SummerHouseControllerTest extends WebTestCase
             'hasBathroom' => true,
         ]);
 
-        $this->assertNotFalse($payload, 'Failed to encode JSON payload.');
+        $this->assertNotFalse($payload, 'failed to encode json payload.');
+
+        $jwtToken = $this->loginDefaultUser($client);
 
         $client->request(
             'POST',
             '/api/summerhouse/create',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_Authorization' => 'Bearer ' . $jwtToken,
+            ],
             $payload
         );
 

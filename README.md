@@ -12,47 +12,56 @@ cp .env.test .env.test.local
 
 Build Docker images:
 
-```
+```sh
 make build
 ```
 
 Install dependencies:
 
-```
+```sh
 make composer-install
-```
-
-Make migrations:
-
-```
-make doctrine-diff
-make doctrine-migrate
 ```
 
 Run the application:
 
-```
+```sh
 make up-logs
 ```
 
-_TESTS_
+Generate JWT keys:
+
+```sh
+make generate-keypair
+```
+
+Setup database:
+
+```sh
+# make migrations-clean
+# make doctrine-drop
+make doctrine-create
+make doctrine-diff
+make doctrine-migrate
+```
+
+### Tests
 
 Run tests:
 
-```
+```sh
 make test-all
 ```
 
 or...
 
-```
+```sh
 make test-services
 make test-controllers
 ```
 
-_FORMATTING AND LINTING_
+### Formatting and linting
 
-```
+```sh
 make phpcs
 make phpcbf
 make php-cs-fixer
@@ -61,9 +70,63 @@ make psalm
 
 ### Api Documentation
 
-- `GET /api/summerhouse/list` - Retrieves a list of all summer houses
+Getting token:
 
-- `POST /api/summerhouse/create` - Creates a new summer house
+- `POST /api/register` - Registers a new user
+
+  Request body:
+
+  ```json
+  {
+    "phoneNumber": "+76665554433",
+    "password": "poE@mTqPY9k4L9fC"
+  }
+  ```
+
+- `POST /api/login` - Returns access and refresh tokens
+
+  Request body:
+
+  ```json
+  {
+    "phoneNumber": "+76665554433",
+    "password": "poE@mTqPY9k4L9fC"
+  }
+  ```
+
+- `POST /api/token/refresh` - Returns access and refresh tokens
+
+  Request body:
+
+  ```json
+  {
+    "refreshToken": "token"
+  }
+  ```
+
+- `POST /api/logout` - Deletes refresh token
+
+  Request body:
+
+  ```json
+  {
+    "refreshToken": "token"
+  }
+  ```
+
+You can create admin user by running this command:
+
+```
+make create-admin PHONE=+72223334455 PASSWORD=poE@mTqPY9k4L9fC
+```
+
+Booking API (_Bearer Token_ must me provided):
+
+- `POST /api/profile` - Returns profile - _ROLE_USER_
+
+- `GET /api/summerhouse/list` - Retrieves a list of all summer houses - _PUBLIC_ACCESS_
+
+- `POST /api/summerhouse/create` - Creates a new summer house - _ROLE_ADMIN_
 
   Request body:
 
@@ -78,19 +141,18 @@ make psalm
   }
   ```
 
-- `PUT /api/summerhouse/change/{houseId}` - Updates the details of an existing summer house (full request body must be provided)
+- `PUT /api/summerhouse/change/{houseId}` - Updates the details of an existing summer house (full request body must be provided) - _ROLE_ADMIN_
 
-- `DELETE /api/summerhouse/delete/{houseId}` - Deletes a summer house by its ID
+- `DELETE /api/summerhouse/delete/{houseId}` - Deletes a summer house by its ID - _ROLE_ADMIN_
 
-- `GET /api/booking/list` - Retrieves a list of all bookings
+- `GET /api/booking/list` - Retrieves a list of all bookings - _ROLE_USER_
 
-- `POST /api/booking/create` - Creates a new booking
+- `POST /api/booking/create` - Creates a new booking - _ROLE_USER_
 
   Request body:
 
   ```json
   {
-    "phoneNumber": "+12223334455",
     "houseId": 1,
     "startDate": "2023-01-20 13:30:00",
     "endDate": "2024-01-20 13:30:00",
@@ -98,11 +160,11 @@ make psalm
   }
   ```
 
-- `PUT /api/booking/change/{bookingId}` - Updates the details of an existing booking (full request body must be provided)
+- `PUT /api/booking/change/{bookingId}` - Updates the details of an existing booking (full request body must be provided) - _ROLE_USER_
 
-- `DELETE /api/booking/delete/{bookingId}` - Deletes a booking by its ID
+- `DELETE /api/booking/delete/{bookingId}` - Deletes a booking by its ID - _ROLE_USER_
 
-_OPTIONAL_
+### Optional
 
 Create `.vscode/launch.json` file to configure Xdebug:
 
@@ -136,7 +198,6 @@ Format settings:
     "getpsalm.psalm-vscode-plugin",
     "redhat.vscode-xml",
     "redhat.vscode-yaml",
-    "bmewburn.vscode-intelephense-client",
     "junstyle.php-cs-fixer"
   ]
 }
