@@ -1,0 +1,56 @@
+nelmio_api_doc:
+    type_info: true
+    use_validation_groups: true
+    documentation:
+        info:
+            title: Good-Booking Bot
+            description: What's cooking, Good-Booking?
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+        security:
+            - Bearer: []
+        paths:
+            /api/login:
+                post:
+                    tags:
+                        - Auth
+                    summary: 'Returns access token and refresh token.'
+                    operationId: post_api_login
+                    requestBody:
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/LoginDto'
+                    responses:
+                        '200':
+                            description: 'Access token and refresh token'
+                            content:
+                                application/json:
+                                schema:
+                                    $ref: '#/components/schemas/TokenDto'
+            /api/token/refresh:
+                post:
+                    tags:
+                        - Auth
+                    summary: ' Returns new access token and refresh token.'
+                    operationId: post_api_token_refresh
+                    requestBody:
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/TokenDto2'
+                    responses:
+                        '200':
+                            description: 'New access token'
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: '#/components/schemas/TokenDto'
+    areas:
+        default:
+            path_patterns:
+                - ^/api

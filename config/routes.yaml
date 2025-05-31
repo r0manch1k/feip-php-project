@@ -9,3 +9,23 @@ api_login:
 
 api_refresh_token:
     path: /api/token/refresh
+
+app.swagger_ui:
+    path: /api/doc/swagger
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+app.swagger:
+    path: /api/doc/swagger.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger }
+
+app.stoplight:
+    path: /api/doc/spotlight
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.stoplight }
+
+app.redocly:
+    path: /api/doc/redocly
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.redocly }
