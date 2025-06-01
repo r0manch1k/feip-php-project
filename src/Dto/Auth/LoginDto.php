@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\Auth;
 
-readonly class UserDto
+readonly class LoginDto
 {
     public function __construct(
-        public ?int $id,
         public string $phoneNumber,
-        public array $roles,
         public string $password,
     ) {
     }

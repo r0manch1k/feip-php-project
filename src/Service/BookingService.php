@@ -28,12 +28,15 @@ class BookingService
      */
     public function getBookings(?User $user = null): array
     {
-        /*
-         * @var Booking[] $bookings
-         */
         if ($user) {
+            /**
+             * @var Booking[] $bookings
+             */
             $bookings = $this->bookingRepository->findBy(['user' => $user]);
         } else {
+            /**
+             * @var Booking[] $bookings
+             */
             $bookings = $this->bookingRepository->findAll();
         }
 

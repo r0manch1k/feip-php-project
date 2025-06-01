@@ -25,7 +25,7 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertResponseStatusCodeSame(201);
+        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 

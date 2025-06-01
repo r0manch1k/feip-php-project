@@ -19,6 +19,7 @@ readonly class BookingDto
     ) {
     }
 
+    // TODO: Use serializer instead of this method
     public function toArray(): array
     {
         return [

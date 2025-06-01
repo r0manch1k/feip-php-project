@@ -16,16 +16,16 @@ Build Docker images:
 make build
 ```
 
-Install dependencies:
-
-```sh
-make composer-install
-```
-
 Run the application:
 
 ```sh
 make up-logs
+```
+
+Install dependencies:
+
+```sh
+make composer-install
 ```
 
 Generate JWT keys:
@@ -40,7 +40,7 @@ Setup database:
 # make migrations-clean
 # make doctrine-drop
 make doctrine-create
-make doctrine-diff
+# make doctrine-diff
 make doctrine-migrate
 ```
 
@@ -83,7 +83,7 @@ Getting token:
   }
   ```
 
-- `POST /api/login` - Returns access and refresh tokens
+- `POST /api/login` - Returns access token and refresh token
 
   Request body:
 
@@ -94,7 +94,7 @@ Getting token:
   }
   ```
 
-- `POST /api/token/refresh` - Returns access and refresh tokens
+- `POST /api/token/refresh` - Returns new access token and refresh token
 
   Request body:
 
@@ -145,7 +145,7 @@ Booking API (_Bearer Token_ must me provided):
 
 - `DELETE /api/summerhouse/delete/{houseId}` - Deletes a summer house by its ID - _ROLE_ADMIN_
 
-- `GET /api/booking/list` - Retrieves a list of all bookings - _ROLE_USER_
+- `GET /api/booking/list` - Retrieves a list of all bookings - _ROLE_USER_ (all if _ROLE_ADMIN_)
 
 - `POST /api/booking/create` - Creates a new booking - _ROLE_USER_
 

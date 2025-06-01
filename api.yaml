@@ -1,0 +1,420 @@
+openapi: 3.0.0
+info:
+    title: 'Good-Booking Bot'
+    description: "What's cooking, Good-Booking?"
+    version: 1.0.0
+paths:
+    /api/login:
+        post:
+            tags:
+                - Auth
+                - 'Login Check'
+            summary: 'Returns access token and refresh token.'
+            description: 'Creates a user token.'
+            operationId: post_api_login
+            requestBody:
+                description: 'The login data'
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginDto'
+            responses:
+                '200':
+                    description: 'Access token and refresh token'
+                    content:
+                        application/json:
+                            schema:
+                                required:
+                                    - token
+                                properties:
+                                    token:
+                                        {
+                                            type: string,
+                                            readOnly: true,
+                                            nullable: false,
+                                        }
+                                type: object
+                        schema: {}
+    /api/token/refresh:
+        post:
+            tags:
+                - Auth
+            summary: ' Returns new access token and refresh token.'
+            operationId: post_api_token_refresh
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TokenDto2'
+            responses:
+                '200':
+                    description: 'New access token'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TokenDto'
+    /api/register:
+        post:
+            tags:
+                - Auth
+            summary: 'Registers a new user.'
+            operationId: post_api_register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginDto'
+            responses:
+                '200':
+                    description: 'Access token and refresh token'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TokenDto'
+            security: []
+    /api/profile:
+        get:
+            tags:
+                - Auth
+            summary: 'Returns profile.'
+            operationId: get_api_profile
+            responses:
+                '200':
+                    description: 'Successful response'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserDto'
+    /api/logout:
+        post:
+            tags:
+                - Auth
+            summary: 'Deletes refresh token.'
+            operationId: post_api_logout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TokenDto2'
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+            security: []
+    /api/booking/list:
+        get:
+            tags:
+                - Booking
+            summary: 'Retrieves a list of all bookings.'
+            description: "Returns a list of bookings for the authenticated user.\nIf the user is an admin, it returns all bookings."
+            operationId: get_api_bookinglist
+            responses:
+                '200':
+                    description: 'The list of bookings'
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/BookingDto'
+    /api/booking/create:
+        post:
+            tags:
+                - Booking
+            summary: 'Creates a new booking.'
+            operationId: post_api_bookingcreate
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BookingDto'
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+    '/api/booking/change/{bookingId}':
+        put:
+            tags:
+                - Booking
+            summary: 'Changes an existing booking.'
+            operationId: put_api_bookingchange
+            parameters:
+                - name: bookingId
+                  in: path
+                  description: 'ID of the booking to change'
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BookingDto'
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+    '/api/booking/delete/{bookingId}':
+        delete:
+            tags:
+                - Booking
+            summary: 'Deletes a booking.'
+            operationId: delete_api_bookingdelete
+            parameters:
+                - name: bookingId
+                  in: path
+                  description: 'ID of the booking to delete'
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+    /api/summerhouse/list:
+        get:
+            tags:
+                - 'Summer House'
+            summary: 'Retrieves a list of all summer houses.'
+            operationId: get_api_summerhouselist
+            responses:
+                '200':
+                    description: 'The list of summer houses'
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/SummerHouseDto'
+            security: []
+    /api/summerhouse/create:
+        post:
+            tags:
+                - 'Summer House'
+            summary: 'Creates a new summer house.'
+            description: 'Requires admin privileges.'
+            operationId: post_api_summerhousecreate
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SummerHouseDto'
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+    '/api/summerhouse/change/{houseId}':
+        put:
+            tags:
+                - 'Summer House'
+            summary: 'Updates an existing summer house.'
+            description: 'Requires admin privileges.'
+            operationId: put_api_summerhousechange
+            parameters:
+                - name: houseId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SummerHouseDto'
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+    '/api/summerhouse/delete/{houseId}':
+        delete:
+            tags:
+                - 'Summer House'
+            summary: 'Deletes a summer house.'
+            description: 'Requires admin privileges.'
+            operationId: delete_api_summerhousedelete
+            parameters:
+                - name: houseId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: 'Success message'
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    message: { type: string, example: success }
+                                type: object
+components:
+    schemas:
+        LoginDto:
+            required:
+                - phoneNumber
+                - password
+            properties:
+                phoneNumber:
+                    type: string
+                password:
+                    type: string
+            type: object
+        TokenDto:
+            required:
+                - token
+                - refreshToken
+            properties:
+                token:
+                    type: string
+                refreshToken:
+                    type: string
+            type: object
+        UserDto:
+            required:
+                - phoneNumber
+            properties:
+                id:
+                    type: integer
+                    nullable: true
+                phoneNumber:
+                    type: string
+                roles:
+                    default: []
+                    oneOf:
+                        - type: array
+                          items:
+                              nullable: true
+                        - type: object
+                          additionalProperties:
+                              nullable: true
+            type: object
+        TokenDto2:
+            required:
+                - refreshToken
+            properties:
+                refreshToken:
+                    type: string
+            type: object
+        BookingDto:
+            required:
+                - user
+                - houseId
+                - startDate
+                - endDate
+            properties:
+                id:
+                    type: integer
+                    nullable: true
+                user:
+                    $ref: '#/components/schemas/User'
+                houseId:
+                    type: integer
+                startDate:
+                    type: string
+                    format: date-time
+                endDate:
+                    type: string
+                    format: date-time
+                comment:
+                    type: string
+                    nullable: true
+            type: object
+        SummerHouseDto:
+            required:
+                - address
+                - price
+            properties:
+                id:
+                    type: integer
+                    nullable: true
+                address:
+                    type: string
+                price:
+                    type: integer
+                bedrooms:
+                    type: integer
+                    nullable: true
+                distanceFromSea:
+                    type: integer
+                    nullable: true
+                hasShower:
+                    type: boolean
+                    nullable: true
+                hasBathroom:
+                    type: boolean
+                    nullable: true
+            type: object
+        User:
+            required:
+                - id
+                - phoneNumber
+                - password
+                - userIdentifier
+            properties:
+                id:
+                    type: integer
+                phoneNumber:
+                    type: string
+                roles:
+                    title: 'The user roles'
+                    type: array
+                    items:
+                        type: string
+                    default: []
+                password:
+                    title: 'The hashed password'
+                    type: string
+                userIdentifier:
+                    title: 'A visual identifier that represents this user.'
+                    type: string
+            type: object
+    securitySchemes:
+        Bearer:
+            type: http
+            scheme: bearer
+        JWT:
+            type: http
+            bearerFormat: JWT
+            scheme: bearer
+security:
+    - Bearer: []
+tags:
+    - name: Auth
+    - name: Booking
+    - name: 'Summer House'
+    - name: 'Login Check'
+      description: 'Login Check'
