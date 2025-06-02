@@ -20,17 +20,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AuthController extends AbstractController
 {
-    private RefreshTokenManagerInterface $refreshTokenManager;
-    private JWTTokenManagerInterface $JWTManager;
-    private AuthService $authService;
-    private ValidatorInterface $validator;
-
-    public function __construct(RefreshTokenManagerInterface $refreshTokenManager, JWTTokenManagerInterface $JWTManager, AuthService $authService, ValidatorInterface $validator)
-    {
-        $this->refreshTokenManager = $refreshTokenManager;
-        $this->JWTManager = $JWTManager;
-        $this->authService = $authService;
-        $this->validator = $validator;
+    public function __construct(
+        private RefreshTokenManagerInterface $refreshTokenManager,
+        private JWTTokenManagerInterface $JWTManager,
+        private AuthService $authService,
+        private ValidatorInterface $validator,
+    ) {
     }
 
     #[Route('/api/register', name: 'api_register')]
@@ -65,7 +60,7 @@ final class AuthController extends AbstractController
             return $this->json([
                 'token' => $this->JWTManager->create($user),
                 'refreshToken' => $refreshToken->getRefreshToken(),
-            ], 201);
+            ], 200);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to create token (error: ' . $e->getMessage() . ')'], 500);
         }

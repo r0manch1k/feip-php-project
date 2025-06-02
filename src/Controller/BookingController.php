@@ -17,13 +17,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/booking', name: 'api_booking')]
 final class BookingController extends AbstractController
 {
-    private BookingService $bookingService;
-    private ValidatorInterface $validator;
-
-    public function __construct(BookingService $bookingService, ValidatorInterface $validator)
-    {
-        $this->bookingService = $bookingService;
-        $this->validator = $validator;
+    public function __construct(
+        private BookingService $bookingService,
+        private ValidatorInterface $validator,
+    ) {
     }
 
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -79,7 +76,7 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'failed to save booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json(['message' => 'booked successfully'], 201);
+        return $this->json(['message' => 'booked successfully'], 200);
     }
 
     #[Route('/change/{bookingId}', name: 'change', methods: ['PUT'])]

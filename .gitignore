@@ -44,3 +44,6 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+/docker/redis/conf/redis.conf
+/docker/redis/logs/redis.log

@@ -23,7 +23,9 @@ class TelegramBotResponseService
 
     public function getStartMessage(): TelegramResponseDto
     {
-        $houses = $this->summerHouseRepository->getMostExpensiveHouses(3);
+        $startProposalHousesAmount = 3;
+
+        $houses = $this->summerHouseRepository->getMostExpensiveHouses($startProposalHousesAmount);
 
         $replyMarkup = json_encode([
             'inline_keyboard' => [
@@ -40,11 +42,11 @@ class TelegramBotResponseService
         }
 
         $response = new TelegramResponseDto(
-            text: $this->twig->render('bot/start_message.txt.twig', [
+            text: $this->twig->render('messages/start.txt.twig', [
                 'houses' => $houses,
             ]),
             replyMarkup: null,
-            parseMode: 'MarkdownV2',
+            parseMode: 'Markdown',
             inlineKeyboard: null,
         );
 

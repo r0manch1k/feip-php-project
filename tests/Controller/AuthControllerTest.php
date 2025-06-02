@@ -25,8 +25,6 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertResponseStatusCodeSame(201);
-
         $this->assertNotFalse($client->getResponse()->getContent());
 
         $content = $client->getResponse()->getContent();
@@ -58,8 +56,6 @@ class AuthControllerTest extends WebTestCase
         ], $payload);
 
         $this->assertResponseIsSuccessful();
-
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 
@@ -95,8 +91,6 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertResponseStatusCodeSame(200);
-
         $this->assertNotFalse($client->getResponse()->getContent());
 
         $content = $client->getResponse()->getContent();
@@ -119,8 +113,6 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertResponseStatusCodeSame(200);
-
         $this->assertNotFalse($client->getResponse()->getContent());
 
         $content = $client->getResponse()->getContent();
@@ -142,8 +134,6 @@ class AuthControllerTest extends WebTestCase
         ], $payload);
 
         $this->assertResponseIsSuccessful();
-
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 

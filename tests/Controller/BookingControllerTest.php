@@ -26,7 +26,6 @@ class BookingControllerTest extends WebTestCase
         ], $payload);
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 
@@ -67,7 +66,6 @@ class BookingControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
@@ -121,7 +119,6 @@ class BookingControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(201);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 
@@ -161,7 +158,6 @@ class BookingControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 

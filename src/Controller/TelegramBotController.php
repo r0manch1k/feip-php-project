@@ -19,14 +19,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TelegramBotController
 {
+    public function __construct(
+        private readonly TelegramBotService $telegramBotService,
+        private readonly TelegramUserService $telegramUserService,
+        private readonly ValidatorInterface $validator,
+        private readonly TelegramBotResponseService $telegramBotResponseService,
+    ) {
+    }
+
     #[Route('/telegram/webhook', name: 'telegram_webhook', methods: ['POST'])]
-    public function handle(
-        Request $request,
-        ValidatorInterface $validator,
-        TelegramBotService $telegramBotService,
-        TelegramUserService $telegramUserService,
-        TelegramBotResponseService $telegramBotResponseService,
-    ): Response {
+    public function handle(Request $request): Response
+    {
         $data = json_decode($request->getContent(), true);
 
         /**
@@ -44,10 +47,10 @@ class TelegramBotController
          */
         $from = $data['message']['from'];
 
-        $bot = $telegramBotService->getBot();
+        $bot = $this->telegramBotService->getBot();
 
         try {
-            $this->saveUser($from, $validator, $telegramUserService);
+            $this->saveUser($from);
         } catch (Exception $e) {
             $bot->sendMessage($chatId, $e->getMessage());
 
@@ -55,13 +58,20 @@ class TelegramBotController
         }
 
         if ('/start' === $text) {
-            $response = $telegramBotResponseService->getStartMessage();
-            $bot->sendMessage(
-                chatId: $chatId,
-                text: $response->text,
-                parseMode: $response->parseMode,
-                replyMarkup: $response->replyMarkup
-            );
+            try {
+                $response = $this->telegramBotResponseService->getStartMessage();
+                $bot->sendMessage(
+                    chatId: $chatId,
+                    text: $response->text,
+                    parseMode: $response->parseMode,
+                    replyMarkup: $response->replyMarkup
+                );
+            } catch (Exception $e) {
+                $bot->sendMessage($chatId, $e->getMessage());
+
+                return new Response('OK');
+            }
+
         } else {
             $bot->sendMessage($chatId, "stop spamming man... {$text}");
         }
@@ -69,37 +79,36 @@ class TelegramBotController
         return new Response('OK');
     }
 
-    private function saveUser(array $from, ValidatorInterface $validator, TelegramUserService $telegramUserService): void
+    private function saveUser(array $from): void
     {
         if (!isset($from['id']) || !isset($from['username'])) {
             throw new InvalidArgumentException('User ID is required');
         }
 
         $user = new TelegramUserDto(
-            null,
-            $from['id'],
-            $from['username'],
-            $from['first_name'] ?? null,
-            $from['last_name'] ?? null,
-            $from['phone_number'] ?? null,
+            id: null,
+            telegramId: $from['id'],
+            username: $from['username'],
+            firstName: $from['first_name'] ?? null,
+            lastName: $from['last_name'] ?? null,
+            phoneNumber: $from['phone_number'] ?? null,
         );
 
         try {
-            $telegramUserService->saveTelegramUser($validator, $user);
+            $this->telegramUserService->saveTelegramUser($this->validator, $user);
         } catch (TelegramUserAlreadyExistsException $e) {
         }
 
         try {
-            $telegramUserService->changeTelegramUser($validator, $user);
+            $this->telegramUserService->changeTelegramUser($this->validator, $user);
         } catch (TelegramUserNoChangesDetectedException $e) {
         }
     }
 
     #[Route('/test', name: 'test', methods: ['GET'])]
-    public function test(
-        TelegramBotResponseService $telegramBotResponseService,
-    ): Response {
-        $response = $telegramBotResponseService->getStartMessage();
+    public function test(): Response
+    {
+        $response = $this->telegramBotResponseService->getStartMessage();
 
         return new Response($response->text);
     }

@@ -29,4 +29,13 @@ class SummerHouseRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // /**
+    //  * @return SummerHouse[]
+    //  */
+    // public getUnbookedHouses(int $limit = 5): array
+    // {
+    //     return $this->createQueryBuilder('h')
+
+    // }
 }

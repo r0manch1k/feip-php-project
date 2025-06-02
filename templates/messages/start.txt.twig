@@ -2,8 +2,9 @@
 
 Ready to book your _dream house_? Let’s make it happen 💪🏡
 
-{% if houses is not empty %}
 *🏠 Here are some available houses for you:*
+
+{% if houses is not empty %}
 {% for house in houses %}
 ━━━━━━━━━━━━━━━
 🏡 *{{ house.address }}*
@@ -17,6 +18,6 @@ Ready to book your _dream house_? Let’s make it happen 💪🏡
 
 Still thinking? Winners don’t hesitate 😉🚀
 {% else %}
-No houses right now, but I’m working on a deal just for you 🤝🔧
+Sorry, mate! No houses right now.
 {% endif %}
 

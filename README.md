@@ -8,6 +8,7 @@ Run this commands to setup environment:
 cp .env .env.local
 cp .env.dev .env.dev.local
 cp .env.test .env.test.local
+cp ./docker/redis/conf/redis.conf.public ./docker/redis/conf/redis.conf
 ```
 
 Build Docker images:
@@ -70,13 +71,20 @@ make psalm
 
 ### Telegram Bot
 
-Make sure there are _TELEGRAM_BOT_TOKEN_ and _TELEGRAM_WEBHOOK_URL_ in `.env` file
+Make sure there are required variables in `.env` file
+
+```sh
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_WEBHOOK_URL=https://your-domain.com/telegram/webhook
+```
 
 Set webhook by running this command:
 
 ```sh
 make set-webhook
 ```
+
+Uses Redis to cache choices. Logs are stored in `/docker/redis/log/redis.log`.
 
 ### Api Documentation
 

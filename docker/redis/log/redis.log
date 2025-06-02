@@ -1,0 +1,198 @@
+1:C 01 Jun 2025 11:59:52.468 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 01 Jun 2025 11:59:52.469 * Redis version=8.0.2, bits=64, commit=00000000, modified=1, pid=1, just started
+1:C 01 Jun 2025 11:59:52.469 * Configuration loaded
+1:M 01 Jun 2025 11:59:52.469 * monotonic clock: POSIX clock_gettime
+1:M 01 Jun 2025 11:59:52.471 * Running mode=standalone, port=6379.
+1:M 01 Jun 2025 11:59:52.474 * <bf> RedisBloom version 8.0.1 (Git=unknown)
+1:M 01 Jun 2025 11:59:52.474 * <bf> Registering configuration options: [
+1:M 01 Jun 2025 11:59:52.474 * <bf> 	{ bf-error-rate       :      0.01 }
+1:M 01 Jun 2025 11:59:52.474 * <bf> 	{ bf-initial-size     :       100 }
+1:M 01 Jun 2025 11:59:52.474 * <bf> 	{ bf-expansion-factor :         2 }
+1:M 01 Jun 2025 11:59:52.475 * <bf> 	{ cf-bucket-size      :         2 }
+1:M 01 Jun 2025 11:59:52.475 * <bf> 	{ cf-initial-size     :      1024 }
+1:M 01 Jun 2025 11:59:52.475 * <bf> 	{ cf-max-iterations   :        20 }
+1:M 01 Jun 2025 11:59:52.475 * <bf> 	{ cf-expansion-factor :         1 }
+1:M 01 Jun 2025 11:59:52.475 * <bf> 	{ cf-max-expansions   :        32 }
+1:M 01 Jun 2025 11:59:52.475 * <bf> ]
+1:M 01 Jun 2025 11:59:52.475 * Module 'bf' loaded from /usr/local/lib/redis/modules//redisbloom.so
+1:M 01 Jun 2025 11:59:52.502 * <search> Redis version found by RedisSearch : 8.0.2 - oss
+1:M 01 Jun 2025 11:59:52.502 * <search> RediSearch version 8.0.1 (Git=5688fcc)
+1:M 01 Jun 2025 11:59:52.502 * <search> Low level api version 1 initialized successfully
+1:M 01 Jun 2025 11:59:52.502 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  1000000, 
+1:M 01 Jun 2025 11:59:52.502 * <search> Initialized thread pools!
+1:M 01 Jun 2025 11:59:52.502 * <search> Disabled workers threadpool of size 0
+1:M 01 Jun 2025 11:59:52.502 * <search> Subscribe to config changes
+1:M 01 Jun 2025 11:59:52.502 * <search> Enabled role change notification
+1:M 01 Jun 2025 11:59:52.503 * <search> Cluster configuration: AUTO partitions, type: 0, coordinator timeout: 0ms
+1:M 01 Jun 2025 11:59:52.503 * <search> Register write commands
+1:M 01 Jun 2025 11:59:52.503 * Module 'search' loaded from /usr/local/lib/redis/modules//redisearch.so
+1:M 01 Jun 2025 11:59:52.509 * <timeseries> RedisTimeSeries version 80001, git_sha=577bfa8b5909e7ee572f0b651399be8303dc6641
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> Redis version found by RedisTimeSeries : 8.0.2 - oss
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> Registering configuration options: [
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-compaction-policy   :              }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-num-threads         :            3 }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-retention-policy    :            0 }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-duplicate-policy    :        block }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-chunk-size-bytes    :         4096 }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-encoding            :   compressed }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-ignore-max-time-diff:            0 }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> 	{ ts-ignore-max-val-diff :     0.000000 }
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> ]
+1:M 01 Jun 2025 11:59:52.510 * <timeseries> Detected redis oss
+1:M 01 Jun 2025 11:59:52.510 * Module 'timeseries' loaded from /usr/local/lib/redis/modules//redistimeseries.so
+1:M 01 Jun 2025 11:59:52.533 * <ReJSON> Created new data type 'ReJSON-RL'
+1:M 01 Jun 2025 11:59:52.533 * <ReJSON> version: 80001 git sha: unknown branch: unknown
+1:M 01 Jun 2025 11:59:52.534 * <ReJSON> Exported RedisJSON_V1 API
+1:M 01 Jun 2025 11:59:52.534 * <ReJSON> Exported RedisJSON_V2 API
+1:M 01 Jun 2025 11:59:52.534 * <ReJSON> Exported RedisJSON_V3 API
+1:M 01 Jun 2025 11:59:52.534 * <ReJSON> Exported RedisJSON_V4 API
+1:M 01 Jun 2025 11:59:52.534 * <ReJSON> Exported RedisJSON_V5 API
+1:M 01 Jun 2025 11:59:52.535 * <ReJSON> Enabled diskless replication
+1:M 01 Jun 2025 11:59:52.535 * <ReJSON> Initialized shared string cache, thread safe: false.
+1:M 01 Jun 2025 11:59:52.535 * Module 'ReJSON' loaded from /usr/local/lib/redis/modules//rejson.so
+1:M 01 Jun 2025 11:59:52.535 * <search> Acquired RedisJSON_V5 API
+1:M 01 Jun 2025 11:59:52.539 * Server initialized
+1:M 01 Jun 2025 11:59:52.539 * Ready to accept connections tcp
+1:signal-handler (1748779236) Received SIGINT scheduling shutdown...
+1:M 01 Jun 2025 12:00:36.738 * User requested shutdown...
+1:M 01 Jun 2025 12:00:36.739 * Saving the final RDB snapshot before exiting.
+1:M 01 Jun 2025 12:00:36.764 * DB saved on disk
+1:M 01 Jun 2025 12:00:36.765 # Redis is now ready to exit, bye bye...
+1:C 01 Jun 2025 12:01:00.767 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 01 Jun 2025 12:01:00.767 * Redis version=8.0.2, bits=64, commit=00000000, modified=1, pid=1, just started
+1:C 01 Jun 2025 12:01:00.767 * Configuration loaded
+1:M 01 Jun 2025 12:01:00.768 * monotonic clock: POSIX clock_gettime
+1:M 01 Jun 2025 12:01:00.769 * Running mode=standalone, port=6379.
+1:M 01 Jun 2025 12:01:00.769 * <bf> RedisBloom version 8.0.1 (Git=unknown)
+1:M 01 Jun 2025 12:01:00.769 * <bf> Registering configuration options: [
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ bf-error-rate       :      0.01 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ bf-initial-size     :       100 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ bf-expansion-factor :         2 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ cf-bucket-size      :         2 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ cf-initial-size     :      1024 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ cf-max-iterations   :        20 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ cf-expansion-factor :         1 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> 	{ cf-max-expansions   :        32 }
+1:M 01 Jun 2025 12:01:00.770 * <bf> ]
+1:M 01 Jun 2025 12:01:00.770 * Module 'bf' loaded from /usr/local/lib/redis/modules//redisbloom.so
+1:M 01 Jun 2025 12:01:00.773 * <search> Redis version found by RedisSearch : 8.0.2 - oss
+1:M 01 Jun 2025 12:01:00.773 * <search> RediSearch version 8.0.1 (Git=5688fcc)
+1:M 01 Jun 2025 12:01:00.773 * <search> Low level api version 1 initialized successfully
+1:M 01 Jun 2025 12:01:00.773 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  1000000, 
+1:M 01 Jun 2025 12:01:00.773 * <search> Initialized thread pools!
+1:M 01 Jun 2025 12:01:00.774 * <search> Disabled workers threadpool of size 0
+1:M 01 Jun 2025 12:01:00.774 * <search> Subscribe to config changes
+1:M 01 Jun 2025 12:01:00.774 * <search> Enabled role change notification
+1:M 01 Jun 2025 12:01:00.774 * <search> Cluster configuration: AUTO partitions, type: 0, coordinator timeout: 0ms
+1:M 01 Jun 2025 12:01:00.774 * <search> Register write commands
+1:M 01 Jun 2025 12:01:00.774 * Module 'search' loaded from /usr/local/lib/redis/modules//redisearch.so
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> RedisTimeSeries version 80001, git_sha=577bfa8b5909e7ee572f0b651399be8303dc6641
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> Redis version found by RedisTimeSeries : 8.0.2 - oss
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> Registering configuration options: [
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-compaction-policy   :              }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-num-threads         :            3 }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-retention-policy    :            0 }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-duplicate-policy    :        block }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-chunk-size-bytes    :         4096 }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-encoding            :   compressed }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-ignore-max-time-diff:            0 }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> 	{ ts-ignore-max-val-diff :     0.000000 }
+1:M 01 Jun 2025 12:01:00.775 * <timeseries> ]
+1:M 01 Jun 2025 12:01:00.776 * <timeseries> Detected redis oss
+1:M 01 Jun 2025 12:01:00.776 * Module 'timeseries' loaded from /usr/local/lib/redis/modules//redistimeseries.so
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Created new data type 'ReJSON-RL'
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> version: 80001 git sha: unknown branch: unknown
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Exported RedisJSON_V1 API
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Exported RedisJSON_V2 API
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Exported RedisJSON_V3 API
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Exported RedisJSON_V4 API
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Exported RedisJSON_V5 API
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Enabled diskless replication
+1:M 01 Jun 2025 12:01:00.777 * <ReJSON> Initialized shared string cache, thread safe: false.
+1:M 01 Jun 2025 12:01:00.778 * Module 'ReJSON' loaded from /usr/local/lib/redis/modules//rejson.so
+1:M 01 Jun 2025 12:01:00.778 * <search> Acquired RedisJSON_V5 API
+1:M 01 Jun 2025 12:01:00.779 * Server initialized
+1:M 01 Jun 2025 12:01:00.779 * <search> Loading event starts
+1:M 01 Jun 2025 12:01:00.779 * <search> Enabled workers threadpool of size 4
+1:M 01 Jun 2025 12:01:00.779 * Loading RDB produced by version 8.0.2
+1:M 01 Jun 2025 12:01:00.779 * RDB age 24 seconds
+1:M 01 Jun 2025 12:01:00.779 * RDB memory usage when created 0.95 Mb
+1:M 01 Jun 2025 12:01:00.779 * Done loading RDB, keys loaded: 0, keys expired: 0.
+1:M 01 Jun 2025 12:01:00.779 * <search> Disabled workers threadpool of size 4
+1:M 01 Jun 2025 12:01:00.780 * <search> Loading event ends
+1:M 01 Jun 2025 12:01:00.780 * DB loaded from disk: 0.001 seconds
+1:M 01 Jun 2025 12:01:00.780 * Ready to accept connections tcp
+1:signal-handler (1748779421) Received SIGINT scheduling shutdown...
+1:M 01 Jun 2025 12:03:41.803 * User requested shutdown...
+1:M 01 Jun 2025 12:03:41.804 * Saving the final RDB snapshot before exiting.
+1:M 01 Jun 2025 12:03:41.849 * DB saved on disk
+1:M 01 Jun 2025 12:03:41.850 # Redis is now ready to exit, bye bye...
+1:C 01 Jun 2025 12:03:43.676 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 01 Jun 2025 12:03:43.676 * Redis version=8.0.2, bits=64, commit=00000000, modified=1, pid=1, just started
+1:C 01 Jun 2025 12:03:43.677 * Configuration loaded
+1:M 01 Jun 2025 12:03:43.677 * monotonic clock: POSIX clock_gettime
+1:M 01 Jun 2025 12:03:43.679 * Running mode=standalone, port=6379.
+1:M 01 Jun 2025 12:03:43.679 * <bf> RedisBloom version 8.0.1 (Git=unknown)
+1:M 01 Jun 2025 12:03:43.679 * <bf> Registering configuration options: [
+1:M 01 Jun 2025 12:03:43.679 * <bf> 	{ bf-error-rate       :      0.01 }
+1:M 01 Jun 2025 12:03:43.679 * <bf> 	{ bf-initial-size     :       100 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> 	{ bf-expansion-factor :         2 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> 	{ cf-bucket-size      :         2 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> 	{ cf-initial-size     :      1024 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> 	{ cf-max-iterations   :        20 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> 	{ cf-expansion-factor :         1 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> 	{ cf-max-expansions   :        32 }
+1:M 01 Jun 2025 12:03:43.680 * <bf> ]
+1:M 01 Jun 2025 12:03:43.680 * Module 'bf' loaded from /usr/local/lib/redis/modules//redisbloom.so
+1:M 01 Jun 2025 12:03:43.693 * <search> Redis version found by RedisSearch : 8.0.2 - oss
+1:M 01 Jun 2025 12:03:43.693 * <search> RediSearch version 8.0.1 (Git=5688fcc)
+1:M 01 Jun 2025 12:03:43.693 * <search> Low level api version 1 initialized successfully
+1:M 01 Jun 2025 12:03:43.693 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  1000000, 
+1:M 01 Jun 2025 12:03:43.693 * <search> Initialized thread pools!
+1:M 01 Jun 2025 12:03:43.693 * <search> Disabled workers threadpool of size 0
+1:M 01 Jun 2025 12:03:43.693 * <search> Subscribe to config changes
+1:M 01 Jun 2025 12:03:43.694 * <search> Enabled role change notification
+1:M 01 Jun 2025 12:03:43.694 * <search> Cluster configuration: AUTO partitions, type: 0, coordinator timeout: 0ms
+1:M 01 Jun 2025 12:03:43.694 * <search> Register write commands
+1:M 01 Jun 2025 12:03:43.694 * Module 'search' loaded from /usr/local/lib/redis/modules//redisearch.so
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> RedisTimeSeries version 80001, git_sha=577bfa8b5909e7ee572f0b651399be8303dc6641
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> Redis version found by RedisTimeSeries : 8.0.2 - oss
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> Registering configuration options: [
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-compaction-policy   :              }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-num-threads         :            3 }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-retention-policy    :            0 }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-duplicate-policy    :        block }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-chunk-size-bytes    :         4096 }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-encoding            :   compressed }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-ignore-max-time-diff:            0 }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> 	{ ts-ignore-max-val-diff :     0.000000 }
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> ]
+1:M 01 Jun 2025 12:03:43.695 * <timeseries> Detected redis oss
+1:M 01 Jun 2025 12:03:43.696 * Module 'timeseries' loaded from /usr/local/lib/redis/modules//redistimeseries.so
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Created new data type 'ReJSON-RL'
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> version: 80001 git sha: unknown branch: unknown
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Exported RedisJSON_V1 API
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Exported RedisJSON_V2 API
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Exported RedisJSON_V3 API
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Exported RedisJSON_V4 API
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Exported RedisJSON_V5 API
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Enabled diskless replication
+1:M 01 Jun 2025 12:03:43.697 * <ReJSON> Initialized shared string cache, thread safe: false.
+1:M 01 Jun 2025 12:03:43.698 * Module 'ReJSON' loaded from /usr/local/lib/redis/modules//rejson.so
+1:M 01 Jun 2025 12:03:43.698 * <search> Acquired RedisJSON_V5 API
+1:M 01 Jun 2025 12:03:43.699 * Server initialized
+1:M 01 Jun 2025 12:03:43.699 * <search> Loading event starts
+1:M 01 Jun 2025 12:03:43.699 * <search> Enabled workers threadpool of size 4
+1:M 01 Jun 2025 12:03:43.699 * Loading RDB produced by version 8.0.2
+1:M 01 Jun 2025 12:03:43.700 * RDB age 2 seconds
+1:M 01 Jun 2025 12:03:43.700 * RDB memory usage when created 0.95 Mb
+1:M 01 Jun 2025 12:03:43.700 * Done loading RDB, keys loaded: 0, keys expired: 0.
+1:M 01 Jun 2025 12:03:43.700 * <search> Disabled workers threadpool of size 4
+1:M 01 Jun 2025 12:03:43.700 * <search> Loading event ends
+1:M 01 Jun 2025 12:03:43.700 * DB loaded from disk: 0.001 seconds
+1:M 01 Jun 2025 12:03:43.700 * Ready to accept connections tcp
+1:signal-handler (1748779431) Received SIGINT scheduling shutdown...
+1:M 01 Jun 2025 12:03:51.941 * User requested shutdown...
+1:M 01 Jun 2025 12:03:51.941 * Saving the final RDB snapshot before exiting.
+1:M 01 Jun 2025 12:03:51.957 * DB saved on disk
+1:M 01 Jun 2025 12:03:51.958 # Redis is now ready to exit, bye bye...
