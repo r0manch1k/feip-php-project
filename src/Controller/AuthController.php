@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\Auth\LoginDto;
+use App\Dto\Auth\TokenDto;
 use App\Dto\UserDto;
 use App\Entity\User;
 use App\Service\AuthService;
@@ -12,6 +14,9 @@ use Exception;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,15 +25,39 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AuthController extends AbstractController
 {
+    private RefreshTokenManagerInterface $refreshTokenManager;
+    private JWTTokenManagerInterface $JWTManager;
+    private AuthService $authService;
+    private ValidatorInterface $validator;
+
     public function __construct(
-        private RefreshTokenManagerInterface $refreshTokenManager,
-        private JWTTokenManagerInterface $JWTManager,
-        private AuthService $authService,
-        private ValidatorInterface $validator,
+        RefreshTokenManagerInterface $refreshTokenManager,
+        JWTTokenManagerInterface $JWTManager,
+        AuthService $authService,
+        ValidatorInterface $validator,
     ) {
+        $this->refreshTokenManager = $refreshTokenManager;
+        $this->JWTManager = $JWTManager;
+        $this->authService = $authService;
+        $this->validator = $validator;
     }
 
-    #[Route('/api/register', name: 'api_register')]
+    /**
+     * Registers a new user.
+     */
+    #[OA\Tag(name: 'Auth')]
+    #[Security(name: null)]
+    #[OA\Response(
+        response: 200,
+        description: 'Access token and refresh token',
+        content: new OA\JsonContent(ref: new Model(type: TokenDto::class))
+    )]
+    #[OA\RequestBody(
+        content: new OA\JsonContent(
+            ref: new Model(type: LoginDto::class)
+        )
+    )]
+    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function register(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -66,7 +95,16 @@ final class AuthController extends AbstractController
         }
     }
 
-    #[Route('/api/profile', name: 'api_profile')]
+    /**
+     * Returns profile.
+     */
+    #[OA\Tag(name: 'Auth')]
+    #[OA\Response(
+        response: 200,
+        description: 'Successful response',
+        content: new OA\JsonContent(ref: new Model(type: UserDto::class, groups: ['public']))
+    )]
+    #[Route('/api/profile', name: 'api_profile', methods: ['GET'])]
     public function profile(): JsonResponse
     {
         /**
@@ -78,14 +116,34 @@ final class AuthController extends AbstractController
             return $this->json(['error' => 'not authenticated'], 401);
         }
 
-        return $this->json([
-            'id' => $user->getId(),
-            'phoneNumber' => $user->getPhoneNumber(),
-            'roles' => $user->getRoles(),
-        ]);
+        $response = new UserDto(
+            id: $user->getId(),
+            phoneNumber: $user->getPhoneNumber() ?? '',
+            roles: $user->getRoles(),
+            password: '',
+        );
+
+        return $this->json($response, 200, [], ['groups' => ['public']]);
     }
 
-    #[Route('/api/logout', name: 'api_logout')]
+    /**
+     *  Deletes refresh token.
+     */
+    #[OA\Tag(name: 'Auth')]
+    #[Security(name: null)]
+    #[OA\Response(
+        response: 200,
+        description: 'Success message',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'success'),
+            ]
+        )
+    )]
+    #[OA\RequestBody(
+        content: new OA\JsonContent(ref: new Model(type: TokenDto::class, groups: ['refresh']))
+    )]
+    #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

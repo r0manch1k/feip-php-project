@@ -8,6 +8,8 @@ use App\Dto\BookingDto;
 use App\Service\BookingService;
 use DateTime;
 use Exception;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,12 +19,27 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/booking', name: 'api_booking')]
 final class BookingController extends AbstractController
 {
-    public function __construct(
-        private BookingService $bookingService,
-        private ValidatorInterface $validator,
-    ) {
+    private BookingService $bookingService;
+    private ValidatorInterface $validator;
+
+    public function __construct(BookingService $bookingService, ValidatorInterface $validator)
+    {
+        $this->bookingService = $bookingService;
+        $this->validator = $validator;
     }
 
+    /**
+     * Retrieves a list of all bookings.
+     *
+     * Returns a list of bookings for the authenticated user.
+     * If the user is an admin, it returns all bookings.
+     */
+    #[OA\Tag(name: 'Booking')]
+    #[OA\Response(
+        response: 200,
+        description: 'The list of bookings',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: BookingDto::class)))
+    )]
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
@@ -45,6 +62,18 @@ final class BookingController extends AbstractController
         return $this->json(array_map(fn ($b) => $b->toArray(), $bookings), 200);
     }
 
+    /**
+     * Creates a new booking.
+     */
+    #[OA\Tag(name: 'Booking')]
+    #[OA\Response(
+        response: 200,
+        description: 'Success message',
+        content: new OA\JsonContent(type: 'object', properties: [
+            new OA\Property(property: 'message', type: 'string', example: 'success'),
+        ])
+    )]
+    #[OA\RequestBody(required: true, content: new OA\JsonContent(ref: new Model(type: BookingDto::class)))]
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
@@ -76,9 +105,28 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'failed to save booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json(['message' => 'booked successfully'], 200);
+        return $this->json(['message' => 'success'], 200);
     }
 
+    /**
+     * Changes an existing booking.
+     */
+    #[OA\Tag(name: 'Booking')]
+    #[OA\Parameter(
+        name: 'bookingId',
+        in: 'path',
+        required: true,
+        description: 'ID of the booking to change',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Success message',
+        content: new OA\JsonContent(type: 'object', properties: [
+            new OA\Property(property: 'message', type: 'string', example: 'success'),
+        ])
+    )]
+    #[OA\RequestBody(content: new OA\JsonContent(ref: new Model(type: BookingDto::class)))]
     #[Route('/change/{bookingId}', name: 'change', methods: ['PUT'])]
     public function change(Request $request, int $bookingId): JsonResponse
     {
@@ -109,9 +157,27 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'failed to change booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json(['message' => 'booking changed successfully'], 200);
+        return $this->json(['message' => 'success'], 200);
     }
 
+    /**
+     * Deletes a booking.
+     */
+    #[OA\Tag(name: 'Booking')]
+    #[OA\Parameter(
+        name: 'bookingId',
+        in: 'path',
+        required: true,
+        description: 'ID of the booking to delete',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Success message',
+        content: new OA\JsonContent(type: 'object', properties: [
+            new OA\Property(property: 'message', type: 'string', example: 'success'),
+        ])
+    )]
     #[Route('/delete/{bookingId}', name: 'delete', methods: ['DELETE'])]
     public function delete(Request $request, int $bookingId): JsonResponse
     {
@@ -127,6 +193,6 @@ final class BookingController extends AbstractController
             return $this->json(['error' => 'failed to delete booking (error: ' . $e->getMessage() . ')'], 500);
         }
 
-        return $this->json(['message' => 'deleted successfully'], 200);
+        return $this->json(['message' => 'success'], 200);
     }
 }

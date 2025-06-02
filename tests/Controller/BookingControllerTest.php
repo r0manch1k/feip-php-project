@@ -119,6 +119,7 @@ class BookingControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 

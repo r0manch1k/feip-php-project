@@ -23,6 +23,12 @@ Run the application:
 make up-logs
 ```
 
+Run the application:
+
+```sh
+make up-logs
+```
+
 Install dependencies:
 
 ```sh
@@ -41,7 +47,7 @@ Setup database:
 # make migrations-clean
 # make doctrine-drop
 make doctrine-create
-make doctrine-diff
+# make doctrine-diff
 make doctrine-migrate
 ```
 
@@ -101,7 +107,7 @@ Getting token:
   }
   ```
 
-- `POST /api/login` - Returns access and refresh tokens
+- `POST /api/login` - Returns access token and refresh token
 
   Request body:
 
@@ -112,7 +118,7 @@ Getting token:
   }
   ```
 
-- `POST /api/token/refresh` - Returns access and refresh tokens
+- `POST /api/token/refresh` - Returns new access token and refresh token
 
   Request body:
 
