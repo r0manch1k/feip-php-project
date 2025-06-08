@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-readonly class TelegramUserDto
+readonly class TelegramBotUserDto
 {
     public function __construct(
         public ?int $id,

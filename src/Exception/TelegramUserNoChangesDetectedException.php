@@ -6,6 +6,6 @@ namespace App\Exception;
 
 use RuntimeException;
 
-class TelegramUserNoChangesDetectedException extends RuntimeException
+class TelegramBotUserNoChangesDetectedException extends RuntimeException
 {
 }

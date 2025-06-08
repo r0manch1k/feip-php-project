@@ -85,7 +85,7 @@ doctrine-drop:
 
 .PHONY: doctrine-fixtures
 doctrine-fixtures-load:
-	$(PHP) bin/console --env=test doctrine:fixtures:load
+	$(PHP) bin/console --env=dev doctrine:fixtures:load --append
 
 .PHONY: doctrine-create-test
 doctrine-create-test:

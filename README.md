@@ -45,10 +45,11 @@ Setup database:
 
 ```sh
 # make migrations-clean
-# make doctrine-drop
+make doctrine-drop
 make doctrine-create
 # make doctrine-diff
 make doctrine-migrate
+# make doctrine-fixtures-load
 ```
 
 ### Tests
@@ -89,6 +90,8 @@ Set webhook by running this command:
 ```sh
 make set-webhook
 ```
+
+Telegram Bot logs are stored in `telegram_bot.log`.
 
 Uses Redis to cache choices. Logs are stored in `/docker/redis/log/redis.log`.
 

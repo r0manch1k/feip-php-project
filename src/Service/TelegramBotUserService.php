@@ -4,36 +4,36 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\TelegramUserDto;
-use App\Entity\TelegramUser;
-use App\Exception\TelegramUserAlreadyExistsException;
-use App\Exception\TelegramUserNoChangesDetectedException;
-use App\Repository\TelegramUserRepository;
+use App\Dto\TelegramBotUserDto;
+use App\Entity\TelegramBotUser;
+use App\Exception\TelegramBotUserAlreadyExistsException;
+use App\Exception\TelegramBotUserNoChangesDetectedException;
+use App\Repository\TelegramBotUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class TelegramUserService
+class TelegramBotUserService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly TelegramUserRepository $telegramUserRepository,
+        private readonly TelegramBotUserRepository $telegramBotUserRepository,
     ) {
     }
 
     /**
-     * @return TelegramUserDto[]
+     * @return TelegramBotUserDto[]
      */
-    public function getTelegramUsers(): array
+    public function getTelegramBotUsers(): array
     {
         /**
-         * @var TelegramUser[] $users
+         * @var TelegramBotUser[] $users
          */
-        $users = $this->telegramUserRepository->findAll();
+        $users = $this->telegramBotUserRepository->findAll();
 
         $users = array_map(
-            fn (TelegramUser $user) => new TelegramUserDto(
+            fn (TelegramBotUser $user) => new TelegramBotUserDto(
                 id: $user->getId(),
                 telegramId: $user->getTelegramId() ?? throw new RuntimeException('telegram id cannot be null'),
                 username: $user->getUsername() ?? throw new RuntimeException('username cannot be null'),
@@ -47,15 +47,33 @@ class TelegramUserService
         return $users;
     }
 
-    public function saveTelegramUser(ValidatorInterface $validator, TelegramUserDto $userDto): void
+    public function getTelegramBotUserByTelegramId(int $telegramId): TelegramBotUserDto
     {
-        $existingUser = $this->telegramUserRepository->findOneBy(['telegramId' => $userDto->telegramId]);
+        $user = $this->telegramBotUserRepository->findOneBy(['telegramId' => $telegramId]);
 
-        if ($existingUser) {
-            throw new TelegramUserAlreadyExistsException('user already exists (id: ' . (string) $existingUser->getId() . ')');
+        if (!$user) {
+            throw new RuntimeException('telegram user not found (id: ' . (string) $telegramId . ')');
         }
 
-        $newTelegramUser = new TelegramUser(
+        return new TelegramBotUserDto(
+            id: $user->getId(),
+            telegramId: $user->getTelegramId() ?? throw new RuntimeException('telegram id cannot be null'),
+            username: $user->getUsername() ?? throw new RuntimeException('username cannot be null'),
+            firstName: $user->getFirstName(),
+            lastName: $user->getLastName(),
+            phoneNumber: $user->getPhoneNumber(),
+        );
+    }
+
+    public function saveTelegramBotUser(ValidatorInterface $validator, TelegramBotUserDto $userDto): void
+    {
+        $existingUser = $this->telegramBotUserRepository->findOneBy(['telegramId' => $userDto->telegramId]);
+
+        if ($existingUser) {
+            throw new TelegramBotUserAlreadyExistsException('user already exists (id: ' . (string) $existingUser->getId() . ')');
+        }
+
+        $newTelegramBotUser = new TelegramBotUser(
             id: null,
             telegramId: $userDto->telegramId,
             username: $userDto->username,
@@ -64,20 +82,20 @@ class TelegramUserService
             phoneNumber: $userDto->phoneNumber,
         );
 
-        $errors = $validator->validate($newTelegramUser);
+        $errors = $validator->validate($newTelegramBotUser);
 
         if (count($errors) > 0) {
             throw new InvalidArgumentException('validation failed: ' . (string) $errors);
         }
 
-        $this->entityManager->persist($newTelegramUser);
+        $this->entityManager->persist($newTelegramBotUser);
 
         $this->entityManager->flush();
     }
 
-    public function changeTelegramUser(ValidatorInterface $validator, TelegramUserDto $userDto): void
+    public function changeTelegramBotUser(ValidatorInterface $validator, TelegramBotUserDto $userDto): void
     {
-        $existingUser = $this->telegramUserRepository->findOneBy(['telegramId' => $userDto->telegramId]);
+        $existingUser = $this->telegramBotUserRepository->findOneBy(['telegramId' => $userDto->telegramId]);
 
         if (!$existingUser) {
             throw new RuntimeException('user not found (id: ' . (string) $userDto->telegramId . ')');
@@ -88,7 +106,7 @@ class TelegramUserService
             && $existingUser->getFirstName() === $userDto->firstName
             && $existingUser->getLastName() === $userDto->lastName
             && $existingUser->getPhoneNumber() === $userDto->phoneNumber) {
-            throw new TelegramUserNoChangesDetectedException('no changes detected');
+            throw new TelegramBotUserNoChangesDetectedException('no changes detected');
         }
 
         if ($existingUser->getTelegramId() !== $userDto->telegramId) {

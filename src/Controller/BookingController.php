@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\BookingDto;
+use App\Dto\UserDto;
 use App\Service\BookingService;
 use DateTime;
 use Exception;
@@ -19,13 +20,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/booking', name: 'api_booking')]
 final class BookingController extends AbstractController
 {
-    private BookingService $bookingService;
-    private ValidatorInterface $validator;
+    public function __construct(
+        private BookingService $bookingService,
+        private ValidatorInterface $validator,
+    ) {
 
-    public function __construct(BookingService $bookingService, ValidatorInterface $validator)
-    {
-        $this->bookingService = $bookingService;
-        $this->validator = $validator;
     }
 
     /**
@@ -53,7 +52,13 @@ final class BookingController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN')) {
                 $bookings = $this->bookingService->getBookings();
             } else {
-                $bookings = $this->bookingService->getBookings($user);
+                $userDto = new UserDto(
+                    id: $user->getId(),
+                    phoneNumber: $user->getPhoneNumber(),
+                    password: '',
+                    roles: $user->getRoles()
+                );
+                $bookings = $this->bookingService->getBookings($userDto);
             }
         } catch (Exception $e) {
             return $this->json(['error' => 'falied to get bookings (error: ' . $e->getMessage() . ')'], 500);
@@ -93,6 +98,7 @@ final class BookingController extends AbstractController
         $booking = new BookingDto(
             id: null,
             user: $user,
+            telegramBotUser: null,
             houseId: $data['houseId'],
             startDate: new DateTime($data['startDate']),
             endDate: new DateTime($data['endDate']),
@@ -100,7 +106,7 @@ final class BookingController extends AbstractController
         );
 
         try {
-            $this->bookingService->saveBooking($this->validator, $booking);
+            $this->bookingService->saveBooking($booking);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to save booking (error: ' . $e->getMessage() . ')'], 500);
         }
@@ -145,6 +151,7 @@ final class BookingController extends AbstractController
         $booking = new BookingDto(
             id: $bookingId,
             user: $user,
+            telegramBotUser: null,
             houseId: $data['houseId'],
             startDate: new DateTime($data['startDate']),
             endDate: new DateTime($data['endDate']),
@@ -152,7 +159,7 @@ final class BookingController extends AbstractController
         );
 
         try {
-            $this->bookingService->changeBooking($this->validator, $booking);
+            $this->bookingService->changeBooking($booking);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to change booking (error: ' . $e->getMessage() . ')'], 500);
         }

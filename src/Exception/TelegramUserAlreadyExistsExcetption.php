@@ -6,6 +6,6 @@ namespace App\Exception;
 
 use RuntimeException;
 
-class TelegramUserAlreadyExistsException extends RuntimeException
+class TelegramBotUserAlreadyExistsException extends RuntimeException
 {
 }

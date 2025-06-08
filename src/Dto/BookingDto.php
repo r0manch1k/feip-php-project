@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\TelegramBotUser;
 use App\Entity\User;
 use DateTimeInterface;
 
+// TODO: Make users dto fields in BookingDto instead of entities.
 readonly class BookingDto
 {
     public function __construct(
-        public ?int $id,
-        public User $user,
         public int $houseId,
         public DateTimeInterface $startDate,
         public DateTimeInterface $endDate,
-        public ?string $comment,
+        public ?int $id = null,
+        public ?User $user = null,
+        public ?TelegramBotUser $telegramBotUser = null,
+        public ?SummerHouseDto $house = null,
+        public ?string $comment = null,
+        public ?float $totalPrice = null,
+        public ?bool $isActive = null,
     ) {
     }
 
@@ -25,7 +31,13 @@ readonly class BookingDto
         return [
             'id' => $this->id,
             'user' => [
-                'phoneNumber' => $this->user->getPhoneNumber(),
+                'phoneNumber' => $this->user?->getPhoneNumber(),
+            ],
+            'TelegramBotUser' => [
+                'telegramId' => $this->telegramBotUser?->getId(),
+                'username' => $this->telegramBotUser?->getUsername(),
+                'firstName' => $this->telegramBotUser?->getFirstName(),
+                'lastName' => $this->telegramBotUser?->getLastName(),
             ],
             'houseId' => $this->houseId,
             'startDate' => $this->startDate,

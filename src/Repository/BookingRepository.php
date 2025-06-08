@@ -6,6 +6,9 @@ namespace App\Repository;
 
 use App\Entity\Booking;
 use App\Entity\SummerHouse;
+use App\Entity\TelegramBotUser;
+use App\Entity\User;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -41,5 +44,41 @@ class BookingRepository extends ServiceEntityRepository
             ->setParameter('endDate', $endDate)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return Booking[]
+     */
+    public function findBookingsByUserSorted(User $user): array
+    {
+        $qb = $this->createQueryBuilder('b')
+        ->where('b.user = :user')
+        ->setParameter('user', $user)
+        ->orderBy(
+            'CASE WHEN b.endDate >= :now THEN 0 ELSE 1 END',
+            'ASC'
+        )
+        ->addOrderBy('b.startDate', 'DESC')
+        ->setParameter('now', new DateTimeImmutable());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Booking[]
+     */
+    public function findBookingsByTelegramBotUserSorted(TelegramBotUser $telegramBotUser): array
+    {
+        $qb = $this->createQueryBuilder('b')
+        ->where('b.telegramBotUser = :telegramBotUser')
+        ->setParameter('telegramBotUser', $telegramBotUser)
+        ->orderBy(
+            'CASE WHEN b.endDate >= :now THEN 0 ELSE 1 END',
+            'ASC'
+        )
+        ->addOrderBy('b.startDate', 'DESC')
+        ->setParameter('now', new DateTimeImmutable());
+
+        return $qb->getQuery()->getResult();
     }
 }

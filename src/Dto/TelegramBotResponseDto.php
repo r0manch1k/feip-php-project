@@ -8,13 +8,12 @@ use TelegramBot\Api\Types\ForceReply;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
-class TelegramResponseDto
+class TelegramBotResponseDto
 {
     public function __construct(
         public string $text,
         public ForceReply|InlineKeyboardMarkup|ReplyKeyboardMarkup|null $replyMarkup = null,
         public ?string $parseMode = null,
-        public ?string $inlineKeyboard = null,
     ) {
     }
 }

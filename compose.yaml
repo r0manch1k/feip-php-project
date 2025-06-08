@@ -1,7 +1,7 @@
 services:
   ###> doctrine/doctrine-bundle ###
   nginx:
-    container_name: nginx
+    container_name: feip-php-project-nginx
     build:
       context: ./docker/nginx
     volumes:
@@ -14,7 +14,7 @@ services:
       - php
 
   php:
-    container_name: php
+    container_name: feip-php-project-php
     build:
       context: ./docker/php
     environment:
@@ -28,7 +28,7 @@ services:
       - postgres
 
   postgres:
-    container_name: postgres
+    container_name: feip-php-project-postgres
     build:
       context: ./docker/postgres
     environment:
@@ -36,7 +36,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "${POSTGRES_HOST_PORT}:5432"
+      - ${POSTGRES_HOST_PORT}:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     healthcheck:
@@ -47,13 +47,11 @@ services:
       start_period: 60s
 
   redis:
-    container_name: redis
+    container_name: feip-php-project-redis
     build:
       context: ./docker/redis
-    # environment:
-    #   - SKIP_FIX_PERMS=1
     ports:
-      - "${REDIS_HOST_PORT}:6379"
+      - ${REDIS_HOST_PORT}:6379
     volumes:
       - redis-data:/data
       - ./docker/redis/log:/var/log/redis
@@ -74,5 +72,5 @@ services:
 volumes:
   ###> doctrine/doctrine-bundle ###
   postgres-data:
-  ###< doctrine/doctrine-bundle ###
   redis-data:
+  ###< doctrine/doctrine-bundle ###

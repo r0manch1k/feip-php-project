@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\TelegramUserRepository;
+use App\Repository\TelegramBotUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TelegramUserRepository::class)]
-#[ORM\Table(
-    name: 'telegram_user',
-    indexes: [new ORM\Index(columns: ['telegram_id'], name: 'idx_telegram_id')]
-)]
-class TelegramUser
+#[ORM\Entity(repositoryClass: TelegramBotUserRepository::class)]
+#[ORM\Table(name: 'telegram_users')]
+// Remove the index because writing to db now is more frequent than reading
+// #[ORM\Index(columns: ['telegram_id'], name: 'idx_telegram_id')]
+class TelegramBotUser
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
