@@ -24,7 +24,6 @@ final class BookingController extends AbstractController
         private BookingService $bookingService,
         private ValidatorInterface $validator,
     ) {
-
     }
 
     /**

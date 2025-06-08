@@ -26,7 +26,6 @@ use Twig\Environment;
 class TelegramBotResponseService
 {
     public function __construct(
-        private readonly TelegramBotService $telegramBotService,
         private readonly SummerHouseService $summerHouseService,
         private readonly BookingService $bookingService,
         private readonly TelegramBotUserRepository $telegramBotUserRepository,
@@ -420,8 +419,11 @@ class TelegramBotResponseService
         );
     }
 
-    public function getBookHouseMessage(int $telegramId, ?int $houseId = null, ?string $messageText = null): TelegramBotResponseDto
-    {
+    public function getBookHouseMessage(
+        int $telegramId,
+        ?int $houseId = null,
+        ?string $messageText = null,
+    ): TelegramBotResponseDto {
         try {
             $telegramBotUserDto = $this->telegramBotUserService->getTelegramBotUserByTelegramId($telegramId);
         } catch (Exception $e) {
@@ -520,7 +522,10 @@ class TelegramBotResponseService
             try {
                 $startDate = $this->getValidatedStartDate($messageText);
             } catch (RuntimeException $e) {
-                return $this->getUnknownCommandMessage($telegramId, $e->getMessage() . ' You can enter the date again.');
+                return $this->getUnknownCommandMessage(
+                    $telegramId,
+                    $e->getMessage() . ' You can enter the date again.'
+                );
             }
 
             $replyMarkup = new InlineKeyboardMarkup([
@@ -580,7 +585,10 @@ class TelegramBotResponseService
             try {
                 $daysAmount = $this->getValidatedDaysAmount($messageText);
             } catch (RuntimeException $e) {
-                return $this->getUnknownCommandMessage($telegramId, $e->getMessage() . ' You can enter the days amount again.');
+                return $this->getUnknownCommandMessage(
+                    $telegramId,
+                    $e->getMessage() . ' You can enter the days amount again.'
+                );
             }
 
             $endDate = $this->getEndDateByDaysAmount(
@@ -637,7 +645,11 @@ class TelegramBotResponseService
                 return $this->getRestartMessage($telegramId);
             }
 
-            if (null === $bookingProgress->startDate || null === $bookingProgress->endDate || null === $bookingProgress->totalPrice) {
+            if (
+                null === $bookingProgress->startDate
+                || null === $bookingProgress->endDate
+                || null === $bookingProgress->totalPrice
+            ) {
                 $this->telegramBotLogger->error('start date, end date or total price is null in booking progress', [
                     'bookingProgress' => $bookingProgress,
                 ]);
@@ -652,7 +664,10 @@ class TelegramBotResponseService
             try {
                 $comment = $this->getValidatedComment($messageText);
             } catch (RuntimeException $e) {
-                return $this->getUnknownCommandMessage($telegramId, $e->getMessage() . ' You can enter the comment again.');
+                return $this->getUnknownCommandMessage(
+                    $telegramId,
+                    $e->getMessage() . ' You can enter the comment again.'
+                );
             }
 
             // Sets the comment to the booking progress.
@@ -707,7 +722,11 @@ class TelegramBotResponseService
                 return $this->getRestartMessage($telegramId);
             }
 
-            if (null === $bookingProgress->startDate || null === $bookingProgress->endDate || null === $bookingProgress->totalPrice) {
+            if (
+                null === $bookingProgress->startDate
+                || null === $bookingProgress->endDate
+                || null === $bookingProgress->totalPrice
+            ) {
                 $this->telegramBotLogger->error('start date, end date or total price is null in booking progress', [
                     'bookingProgress' => $bookingProgress,
                 ]);
@@ -740,7 +759,10 @@ class TelegramBotResponseService
                     'bookingProgress' => $bookingProgress,
                 ]);
 
-                return $this->getRestartMessage($telegramId, 'This house is already booked for the selected dates. Please choose another date.');
+                return $this->getRestartMessage(
+                    $telegramId,
+                    'This house is already booked for the selected dates. Please choose another date.'
+                );
             } catch (Exception $e) {
                 $this->telegramBotLogger->error('error saving booking', [
                     'exception' => $e,
@@ -855,7 +877,7 @@ class TelegramBotResponseService
             throw new RuntimeException('Invalid start date format.');
         }
 
-        if ($startDate < (new DateTimeImmutable())->format('Y-m-d')) {
+        if ($startDate < new DateTimeImmutable('today')) {
             throw new RuntimeException('Start date cannot be in the past.');
         }
 

@@ -169,8 +169,10 @@ class BookingService
             throw new EntityNotFoundException('booking doesn\'t exist (id: ' . $booking->id . ')');
         }
 
-        if ($existingBooking->getUser() !== $booking->user
-            && $existingBooking->getTelegramBotUser() !== $booking->telegramBotUser) {
+        if (
+            $existingBooking->getUser() !== $booking->user
+            && $existingBooking->getTelegramBotUser() !== $booking->telegramBotUser
+        ) {
             throw new InvalidArgumentException('access denied');
         }
 

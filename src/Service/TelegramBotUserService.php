@@ -70,7 +70,8 @@ class TelegramBotUserService
         $existingUser = $this->telegramBotUserRepository->findOneBy(['telegramId' => $userDto->telegramId]);
 
         if ($existingUser) {
-            throw new TelegramBotUserAlreadyExistsException('user already exists (id: ' . (string) $existingUser->getId() . ')');
+            $id = (string) $existingUser->getId();
+            throw new TelegramBotUserAlreadyExistsException('user already exists (id: ' . $id . ')');
         }
 
         $newTelegramBotUser = new TelegramBotUser(
@@ -101,11 +102,13 @@ class TelegramBotUserService
             throw new RuntimeException('user not found (id: ' . (string) $userDto->telegramId . ')');
         }
 
-        if ($existingUser->getTelegramId() === $userDto->telegramId
+        if (
+            $existingUser->getTelegramId() === $userDto->telegramId
             && $existingUser->getUsername() === $userDto->username
             && $existingUser->getFirstName() === $userDto->firstName
             && $existingUser->getLastName() === $userDto->lastName
-            && $existingUser->getPhoneNumber() === $userDto->phoneNumber) {
+            && $existingUser->getPhoneNumber() === $userDto->phoneNumber
+        ) {
             throw new TelegramBotUserNoChangesDetectedException('no changes detected');
         }
 

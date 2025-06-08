@@ -52,14 +52,14 @@ class BookingRepository extends ServiceEntityRepository
     public function findBookingsByUserSorted(User $user): array
     {
         $qb = $this->createQueryBuilder('b')
-        ->where('b.user = :user')
-        ->setParameter('user', $user)
-        ->orderBy(
-            'CASE WHEN b.endDate >= :now THEN 0 ELSE 1 END',
-            'ASC'
-        )
-        ->addOrderBy('b.startDate', 'DESC')
-        ->setParameter('now', new DateTimeImmutable());
+            ->where('b.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy(
+                'CASE WHEN b.endDate >= :now THEN 0 ELSE 1 END',
+                'ASC'
+            )
+            ->addOrderBy('b.startDate', 'DESC')
+            ->setParameter('now', new DateTimeImmutable());
 
         return $qb->getQuery()->getResult();
     }
@@ -70,14 +70,14 @@ class BookingRepository extends ServiceEntityRepository
     public function findBookingsByTelegramBotUserSorted(TelegramBotUser $telegramBotUser): array
     {
         $qb = $this->createQueryBuilder('b')
-        ->where('b.telegramBotUser = :telegramBotUser')
-        ->setParameter('telegramBotUser', $telegramBotUser)
-        ->orderBy(
-            'CASE WHEN b.endDate >= :now THEN 0 ELSE 1 END',
-            'ASC'
-        )
-        ->addOrderBy('b.startDate', 'DESC')
-        ->setParameter('now', new DateTimeImmutable());
+            ->where('b.telegramBotUser = :telegramBotUser')
+            ->setParameter('telegramBotUser', $telegramBotUser)
+            ->orderBy(
+                'CASE WHEN b.endDate >= :now THEN 0 ELSE 1 END',
+                'ASC'
+            )
+            ->addOrderBy('b.startDate', 'DESC')
+            ->setParameter('now', new DateTimeImmutable());
 
         return $qb->getQuery()->getResult();
     }

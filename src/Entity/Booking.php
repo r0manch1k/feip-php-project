@@ -72,7 +72,7 @@ class Booking
 
     public function getBookingDuration(): int
     {
-        return $this->startDate->diff($this->endDate)->days;
+        return $this->startDate->diff($this->endDate)->days + 1;
     }
 
     public function getId(): ?int

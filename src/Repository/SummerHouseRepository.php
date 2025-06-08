@@ -49,7 +49,7 @@ class SummerHouseRepository extends ServiceEntityRepository
                 $qb->expr()->exists($sub->getDQL())
             )
         )
-        ->setParameter('dateTime', $dateTime);
+            ->setParameter('dateTime', $dateTime);
 
         if ($limit > 0) {
             $qb->setMaxResults($limit);

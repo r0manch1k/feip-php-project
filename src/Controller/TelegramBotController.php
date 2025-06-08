@@ -18,8 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 
 class TelegramBotController
@@ -111,7 +109,6 @@ class TelegramBotController
 
                 return new Response('OK');
             }
-
         } else {
             try {
                 /**
@@ -489,38 +486,20 @@ class TelegramBotController
             phoneNumber: $from['phone_number'] ?? null,
         );
 
+        // phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         try {
             $this->TelegramBotUserService->saveTelegramBotUser($this->validator, $user);
         } catch (TelegramBotUserAlreadyExistsException $e) {
+            // Do nothing. Excpected behavior
         }
+        // phpcs:enable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 
+        // phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         try {
             $this->TelegramBotUserService->changeTelegramBotUser($this->validator, $user);
         } catch (TelegramBotUserNoChangesDetectedException $e) {
+            // Do nothing. Excpected behavior
         }
-    }
-
-    #[Route('/test', name: 'test', methods: ['GET'])]
-    public function test(Request $request, TagAwareCacheInterface $cacheTelegramBot): Response
-    {
-        // $valueSet = $cacheTelegramBot->get('item_0', function (ItemInterface $item): string {
-        //     $item->tag(['foo', 'bar']);
-
-        //     return 'cached_' . time();
-        // });
-
-        // $valueAfterInvalidation = $cacheTelegramBot->get('item_0', function (ItemInterface $item): string {
-        //     $item->tag(['foo', 'bar']);
-
-        //     return 're-cached_' . time() + 1;
-        // });
-
-        // $cacheTelegramBot->invalidateTags(['foo']);
-
-        // return new Response("Before invalidation: $valueSet | After invalidation: $valueAfterInvalidation");
-
-        // return new Response($response->text);
-
-        return new Response('OK');
+        // phpcs:enable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
     }
 }
