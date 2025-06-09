@@ -23,12 +23,6 @@ Run the application:
 make up-logs
 ```
 
-Run the application:
-
-```sh
-make up-logs
-```
-
 Install dependencies:
 
 ```sh
@@ -60,7 +54,7 @@ Run tests:
 make test-all
 ```
 
-or...
+or
 
 ```sh
 make test-services
