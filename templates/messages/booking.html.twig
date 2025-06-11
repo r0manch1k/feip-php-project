@@ -1,0 +1,22 @@
+<u>📄 Booking Details:</u>
+
+🏡 <i>House</i>:
+
+📭 <i>Address:</i> <b>{{ booking.house.address }}</b>
+💰 <i>Price:</i> <b>{{ booking.house.price }}$ a day</b>
+🛏️ <i>Bedrooms:</i> <b>{{ booking.house.bedrooms ?? 'N/A' }}</b>
+🌊 <i>Distance from sea:</i> <b>{{ booking.house.distanceFromSea is not null ? booking.house.distanceFromSea ~ ' m' : 'N/A' }}</b>
+🚿 <i>Shower:</i> <b>{{ booking.house.hasShower ? 'Yes' : 'No' }}</b>
+🚽 <i>Bathroom:</i> <b>{{ booking.house.hasBathroom ? 'Yes' : 'No' }}</b>
+
+💼 <i>Other</i>:
+
+🗓️ <i>Period:</i> <b>{{ booking.startDate|date('Y.m.d') }} - {{ booking.endDate|date('Y.m.d') }}</b>
+💰 <i>Total Price:</i> <b>{{ booking.totalPrice }}$</b>
+{% if booking.isActive %}
+✅ Status: <b>Active</b>
+{% else %}
+❌ Status: <b>Inactive</b>
+{% endif %}
+
+<i>Wanna make some changes or delete this one? Just press the button below!</i>

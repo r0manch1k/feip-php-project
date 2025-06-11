@@ -1,0 +1,20 @@
+<b>📅 Your Bookings:</b>
+{% if pagesCount is defined %}
+<i>Page {{ page }}/{{ pagesCount }}</i>
+{% endif %}
+
+{% if bookings is not empty %}
+{% for booking in bookings %}
+🏡 <u><b>#{{ loop.index + (page - 1) * bookings|length }}</b> - <b>{{ booking.house.address }}</b></u>
+🗓️ <i>Period:</i> <b>{{ booking.startDate|date('Y.m.d') }} - {{ booking.endDate|date('Y.m.d') }}</b>
+💰 <i>Total Price:</i> <b>{{ booking.totalPrice }}$</b>
+{% if booking.isActive %}
+✅ Status: <b>Active</b>
+{% else %}
+❌ Status: <b>Inactive</b>
+{% endif %}
+
+{% endfor %}
+{% else %}
+<i>You have no bookings yet.</i>
+{% endif %}

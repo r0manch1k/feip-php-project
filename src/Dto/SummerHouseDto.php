@@ -7,13 +7,13 @@ namespace App\Dto;
 readonly class SummerHouseDto extends HouseDto
 {
     public function __construct(
-        public ?int $id,
-        public string $address,
         public int $price,
-        public ?int $bedrooms,
-        public ?int $distanceFromSea,
-        public ?bool $hasShower,
-        public ?bool $hasBathroom,
+        public string $address,
+        public ?int $id = null,
+        public ?int $bedrooms = null,
+        public ?int $distanceFromSea = null,
+        public ?bool $hasShower = null,
+        public ?bool $hasBathroom = null,
     ) {
     }
 }

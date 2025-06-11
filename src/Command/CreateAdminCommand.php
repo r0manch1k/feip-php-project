@@ -57,7 +57,7 @@ class CreateAdminCommand extends Command
         );
 
         try {
-            $this->authService->saveUser($this->validator, $user);
+            $this->authService->saveUser($user);
 
             $output->writeln("<info>Admin user with phone {$phoneNumber} created successfully.</info>");
 

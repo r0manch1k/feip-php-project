@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SummerHouseRepository::class)]
-#[ORM\Table(name: 'summer_house')]
+#[ORM\Table(name: 'summer_houses')]
 class SummerHouse extends House
 {
     #[ORM\OneToMany(mappedBy: 'house', targetEntity: Booking::class, orphanRemoval: true)]
@@ -78,7 +78,7 @@ class SummerHouse extends House
         return $this;
     }
 
-    public function hasShower(): ?bool
+    public function getHasShower(): ?bool
     {
         return $this->hasShower;
     }
@@ -90,7 +90,7 @@ class SummerHouse extends House
         return $this;
     }
 
-    public function hasBathroom(): ?bool
+    public function getHasBathroom(): ?bool
     {
         return $this->hasBathroom;
     }

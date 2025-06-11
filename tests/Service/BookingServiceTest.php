@@ -60,13 +60,14 @@ class BookingServiceTest extends KernelTestCase
             $bookingDto = new BookingDto(
                 id: null,
                 user: $user,
+                telegramBotUser: null,
                 houseId: 10,
                 comment: 'A happy house',
                 startDate: new DateTime('2027-10-01'),
                 endDate: new DateTime('2028-10-10')
             );
 
-            $bookingService->saveBooking($container->get('validator'), $bookingDto);
+            $bookingService->saveBooking($bookingDto);
         } catch (Exception $e) {
             $this->fail('failed to save booking: ' . $e->getMessage());
         }
@@ -98,6 +99,7 @@ class BookingServiceTest extends KernelTestCase
         $bookingDto = new BookingDto(
             id: null,
             user: $user,
+            telegramBotUser: null,
             houseId: 1,
             comment: 'A happy house',
             startDate: new DateTime('2020-10-01'),
@@ -106,6 +108,6 @@ class BookingServiceTest extends KernelTestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        $bookingService->saveBooking($container->get('validator'), $bookingDto);
+        $bookingService->saveBooking($bookingDto);
     }
 }

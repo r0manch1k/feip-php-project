@@ -1,0 +1,12 @@
+Alright, let’s see what we’ve got here…
+
+<u>🏡 House Details:</u>
+
+📭 <i>Address:</i> <b>{{ house.address }}</b>
+💰 <i>Price:</i> <b>{{ house.price }}$ a day</b>
+🛏️ <i>Bedrooms:</i> <b>{{ house.bedrooms ?? 'N/A' }}</b>
+🌊 <i>Distance from sea:</i> <b>{{ house.distanceFromSea is not null ? house.distanceFromSea ~ ' m' : 'N/A' }}</b>
+🚿 <i>Shower:</i> <b>{{ house.hasShower ? 'Yes' : 'No' }}</b>
+🚽 <i>Bathroom:</i> <b>{{ house.hasBathroom ? 'Yes' : 'No' }}</b>
+
+<i>Ready to book this house? Just press the button below!</i>

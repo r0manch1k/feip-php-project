@@ -8,6 +8,7 @@ Run this commands to setup environment:
 cp .env .env.local
 cp .env.dev .env.dev.local
 cp .env.test .env.test.local
+cp ./docker/redis/conf/redis.conf.public ./docker/redis/conf/redis.conf
 ```
 
 Build Docker images:
@@ -38,10 +39,11 @@ Setup database:
 
 ```sh
 # make migrations-clean
-# make doctrine-drop
+make doctrine-drop
 make doctrine-create
 # make doctrine-diff
 make doctrine-migrate
+# make doctrine-fixtures-load
 ```
 
 ### Tests
@@ -52,7 +54,7 @@ Run tests:
 make test-all
 ```
 
-or...
+or
 
 ```sh
 make test-services
@@ -67,6 +69,25 @@ make phpcbf
 make php-cs-fixer
 make psalm
 ```
+
+### Telegram Bot
+
+Make sure there are required variables in `.env` file
+
+```sh
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_WEBHOOK_URL=https://your-domain.com/telegram/webhook
+```
+
+Set webhook by running this command:
+
+```sh
+make set-webhook
+```
+
+Telegram Bot logs are stored in `telegram_bot.log`.
+
+Uses Redis to cache choices. Logs are stored in `/docker/redis/log/redis.log`.
 
 ### Api Documentation
 
@@ -117,7 +138,7 @@ Getting token:
 You can create admin user by running this command:
 
 ```
-make create-admin PHONE=+72223334455 PASSWORD=poE@mTqPY9k4L9fC
+make create-admin PHONE=+76665554433 PASSWORD=poE@mTqPY9k4L9fC
 ```
 
 Booking API (_Bearer Token_ must me provided):
@@ -145,7 +166,7 @@ Booking API (_Bearer Token_ must me provided):
 
 - `DELETE /api/summerhouse/delete/{houseId}` - Deletes a summer house by its ID - _ROLE_ADMIN_
 
-- `GET /api/booking/list` - Retrieves a list of all bookings - _ROLE_USER_ (all if _ROLE_ADMIN_)
+- `GET /api/booking/list` - Retrieves a list of user's bookings - _ROLE_USER_ (all if _ROLE_ADMIN_)
 
 - `POST /api/booking/create` - Creates a new booking - _ROLE_USER_
 

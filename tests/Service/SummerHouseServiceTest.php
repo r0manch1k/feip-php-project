@@ -56,7 +56,7 @@ class SummerHouseServiceTest extends KernelTestCase
                 hasBathroom: true
             );
 
-            $summerHouseService->saveSummerHouse($container->get('validator'), $summerHouse);
+            $summerHouseService->saveSummerHouse($summerHouse);
             $this->assertTrue(true);
         } catch (Exception $e) {
             $this->fail('failed to save summer house: ' . $e->getMessage());
