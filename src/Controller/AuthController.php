@@ -26,10 +26,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class AuthController extends AbstractController
 {
     public function __construct(
-        private RefreshTokenManagerInterface $refreshTokenManager,
-        private JWTTokenManagerInterface $JWTManager,
-        private AuthService $authService,
-        private ValidatorInterface $validator,
+        private readonly RefreshTokenManagerInterface $refreshTokenManager,
+        private readonly JWTTokenManagerInterface $JWTManager,
+        private readonly AuthService $authService,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 

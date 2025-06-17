@@ -21,8 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class BookingController extends AbstractController
 {
     public function __construct(
-        private BookingService $bookingService,
-        private ValidatorInterface $validator,
+        private readonly BookingService $bookingService,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 

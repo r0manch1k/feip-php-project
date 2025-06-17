@@ -9,7 +9,6 @@ use App\Exception\TelegramBotUserAlreadyExistsException;
 use App\Exception\TelegramBotUserNoChangesDetectedException;
 use App\Service\TelegramBotCacheService;
 use App\Service\TelegramBotResponseService;
-use App\Service\TelegramBotService;
 use App\Service\TelegramBotUserService;
 use Exception;
 use InvalidArgumentException;
@@ -18,12 +17,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 
 class TelegramBotController
 {
     public function __construct(
-        private readonly TelegramBotService $telegramBotService,
+        private readonly BotApi $bot,
         private readonly TelegramBotUserService $TelegramBotUserService,
         private readonly ValidatorInterface $validator,
         private readonly TelegramBotResponseService $telegramBotResponseService,
@@ -42,8 +42,6 @@ class TelegramBotController
 
             return new Response('OK');
         }
-
-        $bot = $this->telegramBotService->getBot();
 
         /**
          * @var int $chatId
@@ -91,7 +89,7 @@ class TelegramBotController
                 $this->telegramBotCacheService->invalidateTelegramBotUserCache($telegramId);
 
                 $response = $this->telegramBotResponseService->getStartMessage($telegramId);
-                $bot->sendMessage(
+                $this->bot->sendMessage(
                     chatId: $chatId,
                     text: $response->text,
                     parseMode: $response->parseMode,
@@ -118,7 +116,7 @@ class TelegramBotController
                     telegramId: $telegramId,
                     messageText: $text,
                 );
-                $bot->sendMessage(
+                $this->bot->sendMessage(
                     chatId: $chatId,
                     text: $response->text,
                     parseMode: $response->parseMode,
@@ -173,8 +171,6 @@ class TelegramBotController
          */
         $telegramId = $from['id'];
 
-        $bot = $this->telegramBotService->getBot();
-
         if (!isset($callbackQuery['data'])) {
             $this->telegramBotLogger->error('callback_query data is missing', [
                 'callback_query' => $callbackQuery,
@@ -207,7 +203,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -234,7 +230,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -263,7 +259,7 @@ class TelegramBotController
                     $replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -290,7 +286,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -317,7 +313,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -342,7 +338,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -369,7 +365,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -396,7 +392,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -423,7 +419,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,
@@ -448,7 +444,7 @@ class TelegramBotController
                     $response->replyMarkup = null;
                 }
 
-                $bot->editMessageText(
+                $this->bot->editMessageText(
                     chatId: $callbackQuery['message']['chat']['id'],
                     messageId: $callbackQuery['message']['message_id'],
                     text: $response->text,

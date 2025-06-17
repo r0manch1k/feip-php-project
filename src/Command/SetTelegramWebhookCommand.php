@@ -9,6 +9,8 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'telegram:webhook:set',
@@ -17,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SetTelegramWebhookCommand extends Command
 {
     public function __construct(
+        private HttpClientInterface $httpClient,
         private ?string $token,
         private ?string $url,
     ) {
@@ -34,15 +37,16 @@ class SetTelegramWebhookCommand extends Command
 
         $apiUrl = 'https://api.telegram.org/bot' . $this->token . '/setWebhook?url=' . urlencode($this->url);
 
-        $response = file_get_contents($apiUrl);
-
-        if (false === $response) {
-            $output->writeln('<error>Failed to set webhook: Unable to reach Telegram API</error>');
+        try {
+            $response = $this->httpClient->request('GET', $apiUrl);
+            $content = $response->getContent(false);
+        } catch (TransportExceptionInterface $e) {
+            $output->writeln('<error>Failed to set webhook: ' . $e->getMessage() . '</error>');
 
             return Command::FAILURE;
         }
 
-        $data = json_decode($response, true);
+        $data = json_decode($content, true);
 
         if (($data['ok'] ?? false) === true) {
             $output->writeln('<info>Webhook set successfully ✅</info>');

@@ -23,9 +23,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class BookingService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private BookingRepository $bookingRepository,
-        private ValidatorInterface $validator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly BookingRepository $bookingRepository,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 

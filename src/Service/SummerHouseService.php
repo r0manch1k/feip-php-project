@@ -14,9 +14,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class SummerHouseService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SummerHouseRepository $summerHouseRepository,
-        private ValidatorInterface $validator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SummerHouseRepository $summerHouseRepository,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 

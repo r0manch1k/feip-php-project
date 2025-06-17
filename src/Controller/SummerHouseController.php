@@ -21,8 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class SummerHouseController extends AbstractController
 {
     public function __construct(
-        private SummerHouseService $summerHouseService,
-        private ValidatorInterface $validator,
+        private readonly SummerHouseService $summerHouseService,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
