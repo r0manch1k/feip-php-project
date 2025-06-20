@@ -1,0 +1,72 @@
+{% if bookingProgress.step.value == 'choose_start_date' %}
+Alright, {% if bookingProgress.telegramBotUser.firstName is defined and bookingProgress.telegramBotUser.firstName %}{{ bookingProgress.telegramBotUser.firstName }}{% elseif bookingProgress.telegramBotUser.username is defined and bookingProgress.telegramBotUser.username %}{{ bookingProgress.telegramBotUser.username }}{% else %}champ{% endif %}. You've picked a really good one. 😏
+
+<u>🏡 Booking Preview:</u>
+
+📭 <i>Address:</i> <b>{{ bookingProgress.houseDto.address }}</b>
+💰 <i>Price:</i> <b>{{ bookingProgress.houseDto.price }}$ a day</b>
+
+---
+
+<b>📅 Let’s pick your dates!</b>
+
+Please enter the <i>start date</i> you'd like to book this house for.
+
+<i>💡 Format: YYYY-MM-DD (example: <code>{{ todayDate }}</code>)</i>
+{% elseif bookingProgress.step.value == 'choose_days_amount' %}
+Almost there!
+
+<u>🏡 Booking Preview:</u>
+
+📭 <i>Address:</i> <b>{{ bookingProgress.houseDto.address }}</b>
+💰 <i>Price:</i> <b>{{ bookingProgress.houseDto.price }}$ a day</b>
+📆 <i>Start Date:</i> <b>{{ bookingProgress.startDate|date('Y-m-d') }}</b>
+
+---
+
+<b>⌛️ For how many days?</b>
+
+Please enter the <i>days amount</i>. Just a number.
+{% elseif bookingProgress.step.value == 'set_comment' %}
+Great!
+
+<u>🏡 Booking Preview:</u>
+
+📭 <i>Address:</i> <b>{{ bookingProgress.houseDto.address }}</b>
+💰 <i>Price:</i> <b>{{ bookingProgress.houseDto.price }}$ a day</b>
+📆 <i>Start Date:</i> <b>{{ bookingProgress.startDate|date('Y-m-d') }}</b>
+✈️ <i>End Date:</i> <b>{{ bookingProgress.endDate|date('Y-m-d') }}</b>
+
+💸 Total Price: <b>{{ bookingProgress.totalPrice|number_format(2, '.', ' ') }}$</b>
+
+---
+
+<b>You can leave a <i>comment</i> for my people ✉️ </b>
+
+Type <i>"-"</i> if you have nothing to say.
+{% elseif bookingProgress.step.value == 'confirm' %}
+Let me see what we have...
+
+<u>🏡 Booking Preview:</u>
+
+📭 <i>Address:</i> <b>{{ bookingProgress.houseDto.address }}</b>
+💰 <i>Price:</i> <b>{{ bookingProgress.houseDto.price }}$ a day</b>
+📆 <i>Start Date:</i> <b>{{ bookingProgress.startDate|date('Y-m-d') }}</b>
+✈️ <i>End Date:</i> <b>{{ bookingProgress.endDate|date('Y-m-d') }}</b>
+✉️ <i>Comment:</i> <b>{% if bookingProgress.comment %}{{ bookingProgress.comment }}{% else %}-{% endif %}</b>
+
+💸 Total Price: <b>{{ bookingProgress.totalPrice|number_format(2, '.', ' ') }}$</b>
+
+---
+
+If everything looks good, confirm your booking below!
+
+<i>Need to change something? You got to start over again, pal. 🙁</i>
+{% elseif bookingProgress.step.value == 'done' %}
+<b>🎉 All set!</b>
+
+Your house is booked and waiting for you!  
+{% else %}
+<b>Oops, something went wrong!</b>
+Please start over by pressing /start.
+{% endif %}

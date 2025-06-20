@@ -50,6 +50,7 @@ class BookingDataFixtures extends Fixture implements DependentFixtureInterface
             $booking = new Booking(
                 id: $i,
                 user: $user,
+                telegramBotUser: null,
                 house: $summerHouses[$i],
                 startDate: $faker->dateTimeBetween('-1 year', '+1 year'),
                 endDate: $faker->dateTimeBetween('+1 year', '+2 years'),

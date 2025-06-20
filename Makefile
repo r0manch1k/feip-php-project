@@ -65,27 +65,27 @@ migrations-clean:
 
 .PHONY: doctrine-create
 doctrine-create:
-	$(PHP) bin/console --env=dev doctrine:database:create
+	$(PHP) bin/console doctrine:database:create
 
 .PHONY: doctrine-diff
 doctrine-diff:
-	$(PHP) bin/console --env=dev doctrine:migrations:diff --formatted
+	$(PHP) bin/console doctrine:migrations:diff --formatted
 
 .PHONY: doctrine-migrate
 doctrine-migrate:
-	$(PHP) bin/console --env=dev doctrine:migrations:migrate
+	$(PHP) bin/console doctrine:migrations:migrate
 
 .PHONY: doctrine-schema
 doctrine-schema:
-	$(PHP) bin/console --env=dev doctrine:schema:create
+	$(PHP) bin/console doctrine:schema:create
 
 .PHONY: doctrine-drop
 doctrine-drop:
-	$(PHP) bin/console --env=dev doctrine:database:drop --force
+	$(PHP) bin/console doctrine:database:drop --force
 
 .PHONY: doctrine-fixtures
 doctrine-fixtures-load:
-	$(PHP) bin/console --env=test doctrine:fixtures:load
+	$(PHP) bin/console --env=dev doctrine:fixtures:load --append
 
 .PHONY: doctrine-create-test
 doctrine-create-test:
@@ -164,3 +164,9 @@ generate-keypair:
 .PHONY: create-admin
 create-admin:
 	$(PHP) bin/console app:create:admin $(PHONE) $(PASSWORD)
+
+# TELEGRAM
+
+.PHONY: set-webhook
+set-webhook:
+	$(PHP) bin/console telegram:webhook:set

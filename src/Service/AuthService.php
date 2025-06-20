@@ -14,13 +14,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AuthService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserPasswordHasherInterface $passwordHasher,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
-    public function saveUser(ValidatorInterface $validator, UserDto $user): User
+    public function saveUser(UserDto $user): User
     {
+        if (null === $user->phoneNumber) {
+            throw new InvalidArgumentException('Phone number cannot be null');
+        }
+
         $newUser = new User(
             id: null,
             phoneNumber: $user->phoneNumber,
@@ -28,7 +33,7 @@ class AuthService
             password: $user->password,
         );
 
-        $errors = $validator->validate($newUser);
+        $errors = $this->validator->validate($newUser);
 
         if (count($errors) > 0) {
             throw new InvalidArgumentException('validation failed: ' . (string) $errors);

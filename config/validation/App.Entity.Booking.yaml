@@ -1,9 +1,11 @@
 App\Entity\Booking:
     properties:
         user:
-            - NotBlank: ~
             - Type:
                   type: App\Entity\User
+        telegramBotUser:
+            - Type:
+                  type: App\Entity\TelegramBotUser
         house:
             - NotBlank: ~
             - Type:

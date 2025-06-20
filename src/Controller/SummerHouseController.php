@@ -20,13 +20,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/summerhouse', name: 'api_summerhouse')]
 final class SummerHouseController extends AbstractController
 {
-    private SummerHouseService $summerHouseService;
-    private ValidatorInterface $validator;
-
-    public function __construct(SummerHouseService $summerHouseService, ValidatorInterface $validator)
-    {
-        $this->summerHouseService = $summerHouseService;
-        $this->validator = $validator;
+    public function __construct(
+        private readonly SummerHouseService $summerHouseService,
+        private readonly ValidatorInterface $validator,
+    ) {
     }
 
     /**
@@ -82,14 +79,14 @@ final class SummerHouseController extends AbstractController
             id: null,
             address: $data['address'] ? $data['address'] : 'None',
             price: $data['price'] ? $data['price'] : 0,
-            bedrooms: $data['bedrooms'],
-            distanceFromSea: $data['distanceFromSea'],
-            hasShower: $data['hasShower'],
-            hasBathroom: $data['hasBathroom']
+            bedrooms: $data['bedrooms'] ?? null,
+            distanceFromSea: $data['distanceFromSea'] ?? null,
+            hasShower: $data['hasShower'] ?? null,
+            hasBathroom: $data['hasBathroom'] ?? null
         );
 
         try {
-            $this->summerHouseService->saveSummerHouse($this->validator, $summerHouse);
+            $this->summerHouseService->saveSummerHouse($summerHouse);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to save summer house (error: ' . $e->getMessage() . ')'], 500);
         }
@@ -141,7 +138,7 @@ final class SummerHouseController extends AbstractController
         );
 
         try {
-            $this->summerHouseService->changeSummerHouse($this->validator, $summerHouse);
+            $this->summerHouseService->changeSummerHouse($summerHouse);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to update summer house (error: ' . $e->getMessage() . ')'], 500);
         }

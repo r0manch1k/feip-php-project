@@ -25,21 +25,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AuthController extends AbstractController
 {
-    private RefreshTokenManagerInterface $refreshTokenManager;
-    private JWTTokenManagerInterface $JWTManager;
-    private AuthService $authService;
-    private ValidatorInterface $validator;
-
     public function __construct(
-        RefreshTokenManagerInterface $refreshTokenManager,
-        JWTTokenManagerInterface $JWTManager,
-        AuthService $authService,
-        ValidatorInterface $validator,
+        private readonly RefreshTokenManagerInterface $refreshTokenManager,
+        private readonly JWTTokenManagerInterface $JWTManager,
+        private readonly AuthService $authService,
+        private readonly ValidatorInterface $validator,
     ) {
-        $this->refreshTokenManager = $refreshTokenManager;
-        $this->JWTManager = $JWTManager;
-        $this->authService = $authService;
-        $this->validator = $validator;
     }
 
     /**
@@ -74,7 +65,7 @@ final class AuthController extends AbstractController
         );
 
         try {
-            $user = $this->authService->saveUser($this->validator, $user);
+            $user = $this->authService->saveUser($user);
         } catch (Exception $e) {
             return $this->json(['error' => 'failed to save user (error: ' . $e->getMessage() . ')'], 500);
         }

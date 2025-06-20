@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BookingRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
-#[ORM\Table(name: 'booking')]
+#[ORM\Table(name: 'bookings')]
 class Booking
 {
     #[ORM\Id]
@@ -19,14 +20,18 @@ class Booking
     private ?int $id;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private User $user;
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?User $user;
+
+    #[ORM\ManyToOne(targetEntity: TelegramBotUser::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?TelegramBotUser $telegramBotUser = null;
 
     #[ORM\ManyToOne(targetEntity: SummerHouse::class, inversedBy: 'bookings')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE', name: 'house_id', referencedColumnName: 'id')]
     private SummerHouse $house;
 
-    #[ORM\Column(length: 255, nullable: true,)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -37,7 +42,8 @@ class Booking
 
     public function __construct(
         ?int $id,
-        User $user,
+        ?User $user,
+        ?TelegramBotUser $telegramBotUser,
         SummerHouse $house,
         DateTimeInterface $startDate,
         DateTimeInterface $endDate,
@@ -45,15 +51,28 @@ class Booking
     ) {
         $this->id = $id;
         $this->user = $user;
+        $this->telegramBotUser = $telegramBotUser;
         $this->house = $house;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->comment = $comment;
     }
 
+    public function getIsActive(): bool
+    {
+        $now = new DateTimeImmutable();
+
+        return $this->startDate <= $now && $this->endDate >= $now;
+    }
+
+    public function getTotalPrice(): float
+    {
+        return $this->house->getPrice() * $this->getBookingDuration();
+    }
+
     public function getBookingDuration(): int
     {
-        return $this->startDate->diff($this->endDate)->days;
+        return $this->startDate->diff($this->endDate)->days + 1;
     }
 
     public function getId(): ?int
@@ -61,14 +80,26 @@ class Booking
         return $this->id;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): static
+    public function getTelegramBotUser(): ?TelegramBotUser
+    {
+        return $this->telegramBotUser;
+    }
+
+    public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function setTelegramBotUser(?TelegramBotUser $telegramBotUser): static
+    {
+        $this->telegramBotUser = $telegramBotUser;
 
         return $this;
     }

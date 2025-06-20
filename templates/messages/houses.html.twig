@@ -1,0 +1,15 @@
+<b>🏠 Here are some available houses for you:</b>
+{% if pagesCount is defined %}
+<i>Page {{ page }}/{{ pagesCount }}</i>
+{% endif %}
+
+{% if houses is not empty %}
+{% for house in houses %}
+🏡 <u><b>#{{ loop.index + (page - 1) * houses|length }}</b> - <b>{{ house.address }}</b></u>
+💰 <i>Price:</i> <b>{{ house.price }}$ a day</b>
+
+{% endfor %}
+<i>Still thinking?</i> Winners don’t hesitate 😉🚀
+{% else %}
+<i>Sorry, mate!</i> No houses right now.
+{% endif %}

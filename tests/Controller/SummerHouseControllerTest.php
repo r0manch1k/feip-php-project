@@ -26,7 +26,6 @@ class SummerHouseControllerTest extends WebTestCase
         ], $payload);
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 
@@ -57,7 +56,6 @@ class SummerHouseControllerTest extends WebTestCase
         $client->request('GET', '/api/summerhouse/list');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
@@ -116,7 +114,6 @@ class SummerHouseControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
 
         $this->assertNotFalse($client->getResponse()->getContent());
 

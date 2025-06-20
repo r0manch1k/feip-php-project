@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HouseRepository::class)]
 #[ORM\InheritanceType('JOINED')]
-#[ORM\Table(name: 'house')]
+#[ORM\Table(name: 'houses')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap(['house' => House::class, 'summer_house' => SummerHouse::class])]
 class House
